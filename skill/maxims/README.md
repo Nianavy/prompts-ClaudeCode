@@ -48,7 +48,8 @@
 ```
 maxims/
 ├── README.md       # 本文件
-└── content.md      # 准则内容
+├── _linus.md       # 内置准则（Linus Torvalds 的 4 条）
+└── custom.md       # 用户自定义准则
 ```
 
 ### 文件格式
@@ -91,4 +92,5 @@ maxims/
 
 ## 准则文件
 
-- [content.md](./content.md)
+- [_linus.md](./_linus.md) — 内置准则（更新时会被覆盖）
+- [custom.md](./custom.md) — 用户自定义（更新时保留）

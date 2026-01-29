@@ -132,7 +132,7 @@ description: 执行单个开发任务，完成后返回
 
 ## 准则
 
-读取 `skills/pensieve/maxims/content.md`，核心信条：
+读取 `skills/pensieve/maxims/` 目录下的准则文件（`_linus.md` 和 `custom.md`），核心信条：
 
 - 如果需要超过 3 层缩进，你就已经完蛋了
 - 重写问题让特殊情况消失，不要加 if 打补丁

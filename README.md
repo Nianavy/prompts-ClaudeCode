@@ -41,7 +41,7 @@ In the story, the Pensieve repeatedly becomes key to revealing truth — someone
 >
 > This mirrors how the Pensieve works — memories aren't always stuffed in your head, but retrieved when needed.
 >
-> Now, Linus's maxims are split into `maxims/content.md`, loaded only during task execution. **Load on demand, not carry everywhere.**
+> Now, Linus's maxims are split into `maxims/_linus.md`, loaded only during task execution. **Load on demand, not carry everywhere.**
 
 ---
 
@@ -127,7 +127,7 @@ rm -rf /tmp/pensieve
 
 Say `loop` to verify installation.
 
-See **[Installation Guide](docs/installation.md)** for details.
+See **[Installation Guide](docs/installation.md)** for details. For updates, see **[Update Guide](docs/update.md)**.
 
 ### For LLM Agents
 
@@ -284,75 +284,15 @@ Decision guides → Pipeline improvement
 
 ## Customization
 
-### Add a Pipeline
+Say `capture` or `record this` to trigger the self-improve pipeline, which will guide you through adding Pipelines, Decisions, or Maxims.
 
-Create a `.md` file in your Pensieve skill's `pipelines/` directory:
+| Type | Location | Naming |
+|------|----------|--------|
+| Pipeline | `pipelines/` | `my-pipeline.md` |
+| Decision | `decisions/` | `{date}-{conclusion}.md` |
+| Maxim | `maxims/custom.md` | Edit this file |
 
-```markdown
-# My Pipeline
-
----
-description: Brief description. Triggered when user says "trigger1", "trigger2".
----
-
-You are [doing what]...
-
-## Core Principles
-
-- **Principle1**: Description
-
----
-
-## Phase 1: Phase Name
-
-**Goal**: What this phase achieves
-
-**Actions**:
-1. Specific action
-2. **Present to user and wait for confirmation**
-
-**Verification**: How to verify completion (must be based on actual feedback, not code inference)
-```
-
-**Key**: Pipeline is a closed-loop system (input → execute → verify → output). Verification must be based on actual feedback — systems don't lie, model inference does.
-
-### Add a Decision
-
-Filename is a declarative conclusion: `decisions/{date}-{conclusion}.md`
-
-```markdown
-# Decision Title
-
-## Context
-What situation triggered this decision?
-
-## Problem
-What real problem did it solve? (not imagined problems)
-
-## Alternatives Considered
-- Option A: xxx (why not chosen)
-- Option B: xxx (why not chosen)
-
-## Decision
-What was chosen, and why?
-
-## Consequence
-What risk was reduced? What better choices can be made later?
-```
-
-**A decision without Alternatives Considered is incomplete — it means no serious weighing was done.**
-
-### Add a Maxim
-
-Edit `maxims/content.md`. **But think twice — maxims are scarce resources.**
-
-Format:
-```markdown
-N. "Maxim Name" - Positioning Tag "Core Quote"
-Classic example: XXX
-Specific guidance points
-Boundary notes
-```
+**Note**: Files starting with `_` are built-in and will be overwritten during updates.
 
 ---
 
@@ -376,7 +316,8 @@ pensieve/
 ├── SKILL.md                 # Entry (dynamically generated resource list)
 ├── maxims/                  # Maxims
 │   ├── README.md           # Writing guide (single source of truth)
-│   └── content.md          # Maxim content (Linus's 4)
+│   ├── _linus.md           # Built-in maxims (Linus's 4)
+│   └── custom.md           # User-defined maxims
 ├── decisions/               # Decisions
 │   └── README.md           # Writing guide
 ├── pipelines/               # Pipelines

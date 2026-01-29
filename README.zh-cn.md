@@ -41,7 +41,7 @@
 >
 > 这和冥想盆的工作方式一样——记忆不是一直塞在脑子里，而是需要时才取出来看。
 >
-> 现在，Linus 的准则被拆分到 `maxims/content.md`，只在执行任务时加载。**按需读取，而不是全量携带。**
+> 现在，Linus 的准则被拆分到 `maxims/_linus.md`，只在执行任务时加载。**按需读取，而不是全量携带。**
 
 ---
 
@@ -127,7 +127,7 @@ rm -rf /tmp/pensieve
 
 说 `loop` 验证安装成功。
 
-详见 **[安装指南](docs/installation.md)**。
+详见 **[安装指南](docs/installation.md)**。更新请看 **[更新指南](docs/update.md)**。
 
 ### 面向 LLM 智能体
 
@@ -284,75 +284,15 @@ Decision 指导 → Pipeline 改进
 
 ## 自定义
 
-### 添加 Pipeline
+说 `沉淀` 或 `记录下来` 触发自改进流程，它会引导你添加 Pipeline、Decision 或 Maxim。
 
-在 Pensieve skill 的 `pipelines/` 目录创建 `.md` 文件：
+| 类型 | 位置 | 命名 |
+|------|------|------|
+| Pipeline | `pipelines/` | `my-pipeline.md` |
+| Decision | `decisions/` | `{date}-{结论}.md` |
+| Maxim | `maxims/custom.md` | 编辑此文件 |
 
-```markdown
-# My Pipeline
-
----
-description: 简要描述。当用户说"触发词1"、"触发词2"时触发。
----
-
-You are [doing what]...
-
-## Core Principles
-
-- **原则1**: 说明
-
----
-
-## Phase 1: 阶段名
-
-**Goal**: 这个阶段要达成什么
-
-**Actions**:
-1. 具体动作
-2. **Present to user and wait for confirmation**
-
-**验证**：如何验证完成（必须基于实际反馈，不是从代码推演）
-```
-
-**关键**：Pipeline 是闭环系统（输入 → 执行 → 验证 → 输出）。验证必须基于实际反馈——系统不会骗你，模型推演会。
-
-### 添加 Decision
-
-文件名是陈述句结论：`decisions/{date}-{结论}.md`
-
-```markdown
-# 决策标题
-
-## Context
-什么情境触发了这个决策？
-
-## Problem
-解决了什么实际问题？（而非假想问题）
-
-## Alternatives Considered
-- 方案 A：xxx（为什么不选）
-- 方案 B：xxx（为什么不选）
-
-## Decision
-选择了什么，为什么？
-
-## Consequence
-降低了什么风险？后续能做什么更好的选择？
-```
-
-**没有 Alternatives Considered 的决策是不完整的——说明没有认真权衡。**
-
-### 添加 Maxim
-
-编辑 `maxims/content.md`。**但要三思——准则是稀缺资源。**
-
-格式：
-```markdown
-N. "准则名称" - 定位标签 "核心引语"
-经典案例：XXX
-具体指导要点
-边界说明
-```
+**注意**：`_` 开头的文件是内置文件，更新时会被覆盖。
 
 ---
 
@@ -376,7 +316,8 @@ pensieve/
 ├── SKILL.md                 # 入口（动态生成的资源列表）
 ├── maxims/                  # 准则
 │   ├── README.md           # 编写指南（唯一真相源）
-│   └── content.md          # 准则内容（Linus 的 4 条）
+│   ├── _linus.md           # 内置准则（Linus 的 4 条）
+│   └── custom.md           # 用户自定义准则
 ├── decisions/               # 决策
 │   └── README.md           # 编写指南
 ├── pipelines/               # 流程

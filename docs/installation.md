@@ -112,32 +112,14 @@ EOF
 
 ## 更新
 
-### Git 方式
-
-```bash
-cd .claude/plugins/pensieve
-git pull
-
-# 同步 skill 更新
-cp -r .claude/plugins/pensieve/skill/* .claude/skills/pensieve/
-```
-
-### Submodule 方式
-
-```bash
-git submodule update --remote .claude/plugins/pensieve
-
-# 同步 skill 更新
-cp -r .claude/plugins/pensieve/skill/* .claude/skills/pensieve/
-```
+详见 **[更新指南](update.md)**。
 
 ---
 
 ## 卸载
 
-1. 删除插件：`rm -rf .claude/plugins/pensieve`
+1. 从 `.claude/settings.json` 中移除插件配置
 2. 删除 skill：`rm -rf .claude/skills/pensieve`
-3. 从 `.claude/settings.json` 中移除插件配置
 
 ---
 
