@@ -12,7 +12,7 @@
 
 **冥想盆 — 人类存入经验，AI 读取真相**
 
-[![GitHub Stars](https://img.shields.io/github/stars/kingkongshot/Pensieve?color=ffcb47&labelColor=black&style=flat-square)](https://github.com/kingkongshot/Pensieve/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/mamajiaa/pensieve-claude-plugin?color=ffcb47&labelColor=black&style=flat-square)](https://github.com/mamajiaa/pensieve-claude-plugin/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-white?labelColor=black&style=flat-square)](LICENSE)
 
 [English](README.md)
@@ -104,16 +104,11 @@ Pensieve 现在采用**官方插件结构**：
 
 ### 快速安装
 
-#### 1. 安装插件（hooks）
+#### 1.（推荐）通过 Marketplace 安装并固定到 `zh` 分支
 
-在 `.claude/settings.json` 中添加：
-
-```json
-{
-  "plugins": [
-    { "source": { "type": "url", "url": "https://github.com/kingkongshot/Pensieve" } }
-  ]
-}
+```bash
+claude plugin marketplace add mamajiaa/pensieve-claude-plugin#zh
+claude plugin install pensieve@pensieve-claude-plugin --scope project
 ```
 
 #### 2. 配置 CLAUDE.md
@@ -146,13 +141,17 @@ mkdir -p .claude/pensieve/{maxims,decisions,knowledge,loop}
 
 如果你是 LLM 智能体，帮用户：
 
-1. 添加插件到 `.claude/settings.json`：
-   ```json
-   {"plugins": [{"source": {"type": "url", "url": "https://github.com/kingkongshot/Pensieve"}}]}
+1. 添加 marketplace（固定到 `zh` 分支）：
+   ```bash
+   claude plugin marketplace add mamajiaa/pensieve-claude-plugin#zh
    ```
-2. 在 `CLAUDE.md` 中添加：`## Pensieve\nLoad pensieve skill IMMEDIATELY. To improve Pensieve, use _self-improve.md.`
-3. 初始化项目级用户数据：`.claude/pensieve/`
-4. 提醒用户重启 Claude Code
+2. 安装插件：
+   ```bash
+   claude plugin install pensieve@pensieve-claude-plugin --scope project
+   ```
+3. 在 `CLAUDE.md` 中添加：`## Pensieve\nLoad pensieve skill IMMEDIATELY. To improve Pensieve, use _self-improve.md.`
+4. 初始化项目级用户数据：`.claude/pensieve/`
+5. 提醒用户重启 Claude Code
 
 ---
 

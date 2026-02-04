@@ -7,22 +7,23 @@ Pensieve 现在采用**官方插件结构**：
 
 ## 快速安装
 
-### 1. 安装插件（hooks）
+### 1.（推荐）通过 Marketplace 安装并固定到 `zh` 分支
 
-在 `.claude/settings.json` 中添加：
+这种方式允许你选择分支/标签版本（例如中文开发分支 `zh`）。
 
-```json
-{
-  "plugins": [
-    {
-      "source": {
-        "type": "url",
-        "url": "https://github.com/kingkongshot/Pensieve"
-      }
-    }
-  ]
-}
+添加 marketplace（固定到 `zh` 分支）：
+
+```bash
+claude plugin marketplace add mamajiaa/pensieve-claude-plugin#zh
 ```
+
+安装插件（建议 project 级共享给团队）：
+
+```bash
+claude plugin install pensieve@pensieve-claude-plugin --scope project
+```
+
+> 说明：`pensieve-claude-plugin` 来自本仓库 `.claude-plugin/marketplace.json` 的 `name` 字段。
 
 ### 2. 配置 CLAUDE.md
 
@@ -62,7 +63,11 @@ mkdir -p .claude/pensieve/{maxims,decisions,knowledge,loop}
 
 ## 用户级安装
 
-如果你想在所有项目中使用：把插件配置放在 `~/.claude/settings.json` 即可。
+如果你想在所有项目中使用，把安装 scope 改为 `user`：
+
+```bash
+claude plugin install pensieve@pensieve-claude-plugin --scope user
+```
 
 ---
 
@@ -80,7 +85,7 @@ mkdir -p .claude/pensieve/{maxims,decisions,knowledge,loop}
 
 ## 卸载
 
-1. 从 `.claude/settings.json` 中移除插件配置
+1. 卸载插件：`claude plugin uninstall pensieve --scope project`（或用 `/plugin` UI）
 2. （可选）删除项目级用户数据：`rm -rf .claude/pensieve`
 
 ---

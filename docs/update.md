@@ -2,7 +2,16 @@
 
 ## 插件（URL 方式）
 
-Claude Code 会自动管理 URL 方式安装的插件。重启 Claude Code 即可获取更新。
+如果你通过 Marketplace 安装：
+
+```bash
+claude plugin marketplace update pensieve-claude-plugin
+claude plugin update pensieve
+```
+
+然后重启 Claude Code 应用更新。
+
+如果你通过 `.claude/settings.json` 的 URL 方式安装：重启 Claude Code 即可获取更新。
 
 ---
 

@@ -12,7 +12,7 @@
 
 **Store your decisions and principles. Claude reads them to make better choices.**
 
-[![GitHub Stars](https://img.shields.io/github/stars/kingkongshot/Pensieve?color=ffcb47&labelColor=black&style=flat-square)](https://github.com/kingkongshot/Pensieve/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/mamajiaa/pensieve-claude-plugin?color=ffcb47&labelColor=black&style=flat-square)](https://github.com/mamajiaa/pensieve-claude-plugin/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-white?labelColor=black&style=flat-square)](LICENSE)
 
 [中文文档](README.zh-cn.md)
@@ -104,16 +104,11 @@ Pensieve follows the **official Claude Code plugin structure**:
 
 ### Quick Install
 
-#### 1. Install Plugin (hooks)
+#### 1. (Recommended) Install via marketplace pinned to `zh`
 
-Add to `.claude/settings.json`:
-
-```json
-{
-  "plugins": [
-    { "source": { "type": "url", "url": "https://github.com/kingkongshot/Pensieve" } }
-  ]
-}
+```bash
+claude plugin marketplace add mamajiaa/pensieve-claude-plugin#zh
+claude plugin install pensieve@pensieve-claude-plugin --scope project
 ```
 
 #### 2. Add to CLAUDE.md
@@ -146,13 +141,17 @@ See **[Installation Guide](docs/installation.md)** for details. For updates, see
 
 If you're an LLM agent, help the user:
 
-1. Add plugin to `.claude/settings.json`:
-   ```json
-   {"plugins": [{"source": {"type": "url", "url": "https://github.com/kingkongshot/Pensieve"}}]}
+1. Add marketplace pinned to `zh`:
+   ```bash
+   claude plugin marketplace add mamajiaa/pensieve-claude-plugin#zh
    ```
-2. Add to `CLAUDE.md`: `## Pensieve\nLoad pensieve skill IMMEDIATELY. To improve Pensieve, use _self-improve.md.`
-3. Initialize `.claude/pensieve/` (project user data)
-4. Remind user to restart Claude Code
+2. Install the plugin:
+   ```bash
+   claude plugin install pensieve@pensieve-claude-plugin --scope project
+   ```
+3. Add to `CLAUDE.md`: `## Pensieve\nLoad pensieve skill IMMEDIATELY. To improve Pensieve, use _self-improve.md.`
+4. Initialize `.claude/pensieve/` (project user data)
+5. Remind user to restart Claude Code
 
 ---
 
