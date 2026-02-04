@@ -56,10 +56,6 @@ You are orchestrating an automated task execution loop. Break down complex work 
 
 2. Run init script to create loop directory and the agent prompt:
    ```bash
-   # 推荐：用插件根级脚本入口（避免路径混淆）
-   "$CLAUDE_PLUGIN_ROOT/scripts/init-loop.sh" <taskListId> <slug>
-
-   # 或：直接用系统 Skill 绝对路径（由 SessionStart 注入）
    <SYSTEM_SKILL_ROOT>/scripts/init-loop.sh <taskListId> <slug>
    ```
    **IMPORTANT**: 这一步不要用 `run_in_background: true`。你需要立刻看到脚本输出的 `LOOP_DIR` 才能进入 Phase 2。
@@ -214,7 +210,7 @@ Agent prompt 模板（`_agent-prompt.md`）由 init-loop.sh 生成，包含：
 
    ❌ **错误**（缺少 task_list_id 参数）：
    ```bash
-   ./skills/pensieve/scripts/end-loop.sh
+   <SYSTEM_SKILL_ROOT>/scripts/end-loop.sh
    ```
 
 2. Route to `_self-improve.md`:
@@ -238,6 +234,6 @@ Agent prompt 模板（`_agent-prompt.md`）由 init-loop.sh 生成，包含：
 ## Related Files
 
 - `loop/README.md` — Detailed documentation
-- `scripts/init-loop.sh` — Initialize loop directory
-- `scripts/bind-loop.sh` — Background binding (activates Stop Hook)
-- `scripts/end-loop.sh` — End loop manually
+- `<SYSTEM_SKILL_ROOT>/scripts/init-loop.sh` — Initialize loop directory
+- `<SYSTEM_SKILL_ROOT>/scripts/bind-loop.sh` — Background binding (activates Stop Hook)
+- `<SYSTEM_SKILL_ROOT>/scripts/end-loop.sh` — End loop manually
