@@ -35,7 +35,7 @@ claude plugin install pensieve@Pensieve --scope project
 
 > **Instruction to LLMs**: If you are the agent doing installation, **create or update** this file. Keep it short and do not overwrite existing content.
 
-Add this to the project root (choose **one**: `CLAUDE.md` or `AGENTS.md`):
+Add this to the project root (`CLAUDE.md` only):
 
 ```markdown
 ## Pensieve
