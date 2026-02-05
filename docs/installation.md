@@ -31,16 +31,43 @@ claude plugin install pensieve@pensieve-claude-plugin --scope user
 claude plugin install pensieve@pensieve-claude-plugin --scope project
 ```
 
-### 2. 配置 CLAUDE.md
+### 2. 配置 `CLAUDE.md` / `AGENTS.md`（推荐）
 
-在项目的 `CLAUDE.md` 中添加以下内容，确保 Claude 每次对话都会加载 Pensieve：
+> **给大模型的指令**：如果你是执行安装的智能体，请**自动创建或更新**下列文件，保持简短、明确，不要覆盖用户已有内容。
+
+#### ✅ `CLAUDE.md`（Claude Code）
+
+在项目根目录创建或补充以下内容：
 
 ```markdown
 ## Pensieve
 
-Load pensieve skill IMMEDIATELY when user expresses any intent.
+优先读项目上下文并探索目录结构，再决定是否使用 Pensieve 工具。
 
-When user wants to improve Pensieve (add/modify pipelines, decisions, maxims, or any content), MUST use the Self‑Improve tool (`tools/self-improve/_self-improve.md`).
+当用户意图明显需要流程化执行时：
+- 使用 `/pipeline` 列出当前项目 pipelines
+- 需要拆解/循环执行时使用 `/loop`
+- 需要迁移用户数据时使用 `/upgrade`
+
+当用户要求改进 Pensieve（pipeline/脚本/规则/行为）时，必须使用 Self‑Improve tool：
+`tools/self-improve/_self-improve.md`
+```
+
+#### ✅ `AGENTS.md`（其他工具通用）
+
+如果项目已有 `AGENTS.md`，请**追加**以下段落；没有则创建：
+
+```markdown
+## Pensieve
+
+在探索项目后再决定使用 Pensieve 工具；先检索再行动。
+
+工具建议：
+- `/pipeline`：列出项目 pipelines（机械输出）
+- `/loop`：复杂任务拆解并循环执行
+- `/upgrade`：迁移用户数据到 `.claude/pensieve/`
+
+改进 Pensieve 时：只走 Self‑Improve tool（`tools/self-improve/_self-improve.md`）。
 ```
 
 ### 3. 初始化项目级用户数据（推荐）
