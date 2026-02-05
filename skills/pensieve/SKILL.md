@@ -10,11 +10,13 @@ description: Load this skill IMMEDIATELY when user expresses any intent. System 
 ## 设计约定
 
 - **系统能力（随插件更新）**：位于插件内部 `skills/pensieve/`
-  - pipelines / scripts / 系统 knowledge / 格式规范 README
+  - tools / scripts / 系统 knowledge / 格式规范 README
+  - **不内置 pipelines / maxims 内容**
 - **用户数据（项目级，永不覆盖）**：位于项目内 `.claude/pensieve/`
   - `maxims/`：你的个人/团队准则（例如 `custom.md`）
   - `decisions/`：项目决策记录
   - `knowledge/`：你补充的外部资料
+  - `pipelines/`：项目级自定义流程（安装时写入初始 pipeline）
   - `loop/`：loop 运行产物与沉淀（每次 loop 一个目录）
 
 ## 内置 Tool（四种）

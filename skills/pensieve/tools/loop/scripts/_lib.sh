@@ -37,7 +37,7 @@ user_data_root() {
 ensure_user_data_root() {
     local dr
     dr="$(user_data_root)"
-    mkdir -p "$dr"/{maxims,decisions,knowledge,loop}
+    mkdir -p "$dr"/{maxims,decisions,knowledge,pipelines,loop}
     echo "$dr"
 }
 

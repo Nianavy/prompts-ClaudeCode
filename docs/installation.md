@@ -61,7 +61,7 @@ claude plugin install pensieve@pensieve-claude-plugin --scope project
 mkdir -p .claude/pensieve/{maxims,decisions,knowledge,pipelines,loop}
 ```
 
-或运行插件内置初始化脚本（会补齐默认文件，且不会覆盖已有文件）：
+或运行插件内置初始化脚本（会补齐默认文件，写入**初始准则与 pipeline**，且不会覆盖已有文件）：
 
 ```bash
 <SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-project-data.sh

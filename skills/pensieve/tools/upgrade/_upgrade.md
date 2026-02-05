@@ -41,6 +41,11 @@ description: 指导用户数据升级到项目级 `.claude/pensieve/` 目录结�
   - `pipelines/*.md`
   - `loop/*`
 
+> 旧版本曾在插件内置 `maxims/_linus.md` 与 `pipelines/review.md`。如果你仍在使用它们，请将内容复制到：
+> - `.claude/pensieve/maxims/custom.md`（准则）
+> - `.claude/pensieve/pipelines/review.md`（pipeline）
+> 复制后即可删除旧文件，避免后续插件更新覆盖。
+
 ### 哪些不迁移
 
 - **系统内置文件**（通常以下划线 `_` 开头）：

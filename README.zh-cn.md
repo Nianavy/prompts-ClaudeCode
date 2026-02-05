@@ -35,13 +35,13 @@
 >
 > **关于架构演进**
 >
-> 我们最初把 Linus Torvalds 的角色提示词放在 CLAUDE.md 里，让它始终存在于上下文中。**这是个错误。**
+> 我们最初把长提示词放在 CLAUDE.md 里，让它始终存在于上下文中。**这是个错误。**
 >
 > 长提示词会让 LLM 输出变得冗长、难以预测。我们发现：**只在特定环节加载提示词，响应会更可靠。**
 >
 > 这和冥想盆的工作方式一样——记忆不是一直塞在脑子里，而是需要时才取出来看。
 >
-> 现在，Linus 的准则被拆分到 `maxims/_linus.md`，只在执行任务时加载。**按需读取，而不是全量携带。**
+> 现在，准则与 pipeline 仅在**项目级用户数据**中维护，并在需要时加载。**按需读取，而不是全量携带。**
 
 ---
 
@@ -51,7 +51,7 @@
 - [安装](#安装)
 - [Loop 模式](#loop-模式)
 - [五类记忆](#五类记忆)
-- [内置准则](#内置准则)
+- [初始准则](#初始准则)
 - [自定义](#自定义)
 - [架构](#架构)
 - [设计哲学](#设计哲学)
@@ -133,7 +133,7 @@ claude plugin install pensieve@pensieve-claude-plugin --scope project
 mkdir -p .claude/pensieve/{maxims,decisions,knowledge,pipelines,loop}
 ```
 
-或运行插件内置初始化脚本（不会覆盖已有文件；绝对路径会在 SessionStart 注入）：
+或运行插件内置初始化脚本（写入**初始准则与 pipeline**，不会覆盖已有文件；绝对路径会在 SessionStart 注入）：
 
 ```bash
 <SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-project-data.sh
@@ -216,11 +216,11 @@ Phase 6: Stop Hook 提示自改进（可选）
 
 ---
 
-## 内置准则
+## 初始准则
 
-我们预存了 4 条准则，来自 Linux 内核的创造者 Linus Torvalds。
+安装时会在 `.claude/pensieve/maxims/custom.md` 写入**项目级初始准则**，你可以自由修改或替换。
 
-这些是我们认为最值得传承的"品德记忆"。从上到下代表优先级——遇到冲突时，优先遵守排在前面的。
+从上到下代表优先级——遇到冲突时，优先遵守排在前面的。
 
 ### 1. "好品味" — 消除边界情况
 
@@ -339,7 +339,7 @@ pensieve/
         ├── maxims/
         ├── decisions/
         ├── knowledge/
-        └── pipelines/         # 系统示例流程（如 review）
+        └── pipelines/         # 仅格式文档（不内置 pipeline）
 
 <project>/
 └── .claude/
@@ -374,7 +374,7 @@ pensieve/
 - Knowledge 只在 Pipeline 需要时加载
 - 历史 Decision 只在遇到类似情境时被引用
 
-这就是为什么 Linus 的角色提示词被拆分到 Skill 里，而不是放在 CLAUDE.md。
+这就是为什么角色提示词被拆分到工具/技能里，而不是放在 CLAUDE.md。
 
 ### 文档解耦
 

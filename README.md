@@ -35,13 +35,13 @@ In the story, the Pensieve repeatedly becomes key to revealing truth — someone
 >
 > **On Architecture Evolution**
 >
-> We initially put Linus Torvalds' role prompt in CLAUDE.md, keeping it always in context. **This was a mistake.**
+> We initially kept long prompts always in context. **This was a mistake.**
 >
 > Long prompts make LLM outputs verbose and unpredictable. We discovered: **loading prompts only at specific stages makes responses more reliable.**
 >
 > This mirrors how the Pensieve works — memories aren't always stuffed in your head, but retrieved when needed.
 >
-> Now, Linus's maxims are split into `maxims/_linus.md`, loaded only during task execution. **Load on demand, not carry everywhere.**
+> Now, maxims and pipelines are seeded into **project-level user data** and loaded only when needed. **Load on demand, not carry everywhere.**
 
 ---
 
@@ -51,7 +51,7 @@ In the story, the Pensieve repeatedly becomes key to revealing truth — someone
 - [Installation](#installation)
 - [Loop Mode](#loop-mode)
 - [Five Types of Memory](#five-types-of-memory)
-- [Built-in Maxims](#built-in-maxims)
+- [Initial Maxims](#initial-maxims)
 - [Customization](#customization)
 - [Architecture](#architecture)
 - [Design Philosophy](#design-philosophy)
@@ -133,7 +133,7 @@ When improving Pensieve, MUST use `tools/self-improve/_self-improve.md`.
 mkdir -p .claude/pensieve/{maxims,decisions,knowledge,pipelines,loop}
 ```
 
-Or run the plugin initializer (does not overwrite existing files). The absolute path is injected at SessionStart:
+Or run the plugin initializer (seeds initial maxims + pipeline, does not overwrite existing files). The absolute path is injected at SessionStart:
 
 ```bash
 <SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-project-data.sh
@@ -216,11 +216,11 @@ Early automation is low, but through self-improve after each Loop, questions it 
 
 ---
 
-## Built-in Maxims
+## Initial Maxims
 
-We pre-stored 4 maxims from Linus Torvalds, creator of the Linux kernel.
+During installation, we seed **project-level** maxims at `.claude/pensieve/maxims/custom.md`. They are editable and versioned with your project.
 
-These are what we consider the most valuable "character memories" to pass on. Top to bottom = priority — when conflicts arise, follow the one listed first.
+Top to bottom = priority — when conflicts arise, follow the one listed first.
 
 ### 1. "Good Taste" — Eliminate Edge Cases
 
@@ -339,7 +339,7 @@ pensieve/
         ├── maxims/
         ├── decisions/
         ├── knowledge/
-        └── pipelines/         # System example pipelines (e.g. review)
+        └── pipelines/         # Format docs only (no built-in pipelines)
 
 <project>/
 └── .claude/
@@ -374,7 +374,7 @@ Long prompts make LLM outputs unpredictable. Pensieve's core idea: **load only t
 - Knowledge loads only when Pipeline needs it
 - Historical Decisions referenced only when facing similar situations
 
-This is why Linus's role prompt was split into Skill, not kept in CLAUDE.md.
+This is why role prompts live in tools/skills, not in CLAUDE.md.
 
 ### Document Decoupling
 
