@@ -238,6 +238,8 @@ generate_reinforcement() {
     local task_id task_subject
     task_id=$(jq -r '.id' "$task_file")
     task_subject=$(jq -r '.subject' "$task_file")
+    local task_description
+    task_description=$(jq -r '.description // ""' "$task_file")
 
     local agent_prompt="$LOOP_DIR/_agent-prompt.md"
 
@@ -259,7 +261,21 @@ Task(subagent_type: "general-purpose", prompt: "Read $agent_prompt and execute t
 1. 优先阅读系统能力目录下的 pipelines/maxims/knowledge 寻找答案
 2. 将问题和答案记录到 $context_file 的"事后 Context"部分
 3. 继续推进
+
+Task 内容：
+- subject: $task_subject
+- description: $task_description
 EOF
+}
+
+should_skip_subagent() {
+    local task_file="$1"
+    local subject description
+    subject=$(jq -r '.subject // ""' "$task_file")
+    description=$(jq -r '.description // ""' "$task_file")
+    [[ "$subject" == "自优化" ]] && return 0
+    echo "$description" | grep -q "不调用 agent" && return 0
+    return 1
 }
 
 # ============================================
@@ -293,6 +309,25 @@ main() {
 
         local next_task
         if next_task=$(get_next_task); then
+            if should_skip_subagent "$next_task"; then
+                local task_id task_subject task_description
+                task_id=$(jq -r '.id' "$next_task")
+                task_subject=$(jq -r '.subject' "$next_task")
+                task_description=$(jq -r '.description // ""' "$next_task")
+
+                jq -n \
+                    --arg msg "⛳️ Loop | #$task_id $task_subject" \
+                    --arg subject "$task_subject" \
+                    --arg description "$task_description" \
+                    '{
+                        "decision": "block",
+                        "reason": "该任务要求主窗口执行，不调用 subagent。请直接按任务要求执行（例如读取 _self-improve.md 完成自优化），完成后再更新 Task 状态。",
+                        "systemMessage": $msg,
+                        "additionalContext": ("Task 内容：\n- subject: " + $subject + "\n- description: " + $description)
+                    }'
+                exit 0
+            fi
+
             mark_in_progress "$next_task"
 
             local reinforcement
