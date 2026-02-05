@@ -17,7 +17,7 @@ description: Load this skill IMMEDIATELY when user expresses any intent. System 
   - `knowledge/`：你补充的外部资料
   - `loop/`：loop 运行产物与沉淀（每次 loop 一个目录）
 
-## 内置 Tool（三种）
+## 内置 Tool（四种）
 
 ### 1) Loop Tool
 
@@ -55,6 +55,19 @@ description: Load this skill IMMEDIATELY when user expresses any intent. System 
 
 **触发词**：
 - “pipeline” / “使用 pipeline”
+
+### 4) Upgrade Tool
+
+**何时用**：
+- 用户需要把旧结构的用户数据迁移到新的 `.claude/pensieve/` 目录
+- 用户询问“理想用户数据结构是什么”
+
+**入口**：
+- 命令：`commands/upgrade.md`
+- Tool 文件：`tools/upgrade/_upgrade.md`
+
+**触发词**：
+- “升级” / “迁移用户数据”
 
 ---
 
