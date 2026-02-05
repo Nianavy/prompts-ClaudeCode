@@ -53,7 +53,7 @@ if [[ "$TASK_LIST_ID" == "default" ]]; then
     echo ""
     echo "请使用真实的 taskListId："
     echo "- 优先从 TaskCreate 的返回中复制"
-    echo "- 如果没有看到 taskListId，可运行：`claude task-list-id`"
+    echo "- 如果没有看到 taskListId，说明你可能没有调用 TaskCreate 工具（只是输出了文本）；请重新调用 TaskCreate 并展开工具输出"
     exit 1
 fi
 
@@ -64,7 +64,7 @@ if [[ ! -d "$TASKS_DIR" ]]; then
     echo ""
     echo "请确保使用真实的 taskListId："
     echo "- 优先从 TaskCreate 的返回中复制"
-    echo "- 如果没有看到 taskListId，可尝试运行：`claude task-list-id`"
+    echo "- 如果没有看到 taskListId，请展开工具输出（例如 ctrl+o）查看返回的 JSON"
     exit 1
 fi
 

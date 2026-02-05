@@ -52,7 +52,10 @@ You are orchestrating an automated task execution loop. Break down complex work 
    # Returns { taskListId: "abc-123-uuid", taskId: "1" }
    ```
    ⚠️ **必须使用返回的真实 taskListId**（如 `5e600100-9157-4888-...`），不是 "default"。
-   如果你没有看到 taskListId，可尝试运行：`claude task-list-id`
+   如果你没有看到 taskListId：
+   - 先确认你**真的调用了 TaskCreate 工具**（不是把 `TaskCreate ...` 当普通文本输出）
+   - 展开工具输出（例如 `ctrl+o`）查看返回的 JSON
+   - 从 JSON 中复制 `taskListId`
 
 2. Run init script to create loop directory and the agent prompt:
    ```bash

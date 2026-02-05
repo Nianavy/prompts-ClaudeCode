@@ -10,7 +10,7 @@
     {
       "name": "pensieve",
       "description": "Pensieve: loop automation + memory capture for Claude Code (system prompts in plugin, user data in .claude/pensieve)",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "author": {
         "name": "mamajiaa"
       },
