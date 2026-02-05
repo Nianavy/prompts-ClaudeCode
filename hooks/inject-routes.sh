@@ -14,6 +14,7 @@ command -v jq >/dev/null 2>&1 || exit 0
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 SYSTEM_SKILL_ROOT="$PLUGIN_ROOT/skills/pensieve"
+TOOLS_ROOT="$SYSTEM_SKILL_ROOT/tools"
 PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 USER_DATA_ROOT="$PROJECT_ROOT/.claude/pensieve"
 
@@ -60,18 +61,22 @@ CONTEXT+=$'\n'
 CONTEXT+="- 项目级用户数据: \`$USER_DATA_ROOT\`"
 CONTEXT+=$'\n\n'
 
-# 系统 Pipelines
-if [[ -d "$SYSTEM_SKILL_ROOT/pipelines" ]]; then
-    CONTEXT+="## 系统 Pipelines"
+# 系统 Tools
+if [[ -d "$TOOLS_ROOT" ]]; then
+    CONTEXT+="## 系统 Tools"
     CONTEXT+=$'\n\n'
-    for f in "$SYSTEM_SKILL_ROOT/pipelines"/*.md; do
-        [[ -f "$f" ]] || continue
-        name=$(basename "$f" .md)
-        [[ "$name" == "README" ]] && continue
-        if [[ "$name" == _* ]]; then
-            CONTEXT+="- \`$name.md\` (内置)"
-        else
-            CONTEXT+="- \`$name.md\`"
+    for d in "$TOOLS_ROOT"/*/; do
+        [[ -d "$d" ]] || continue
+        tool_name=$(basename "$d")
+        CONTEXT+="- \`$tool_name/\`"
+
+        # 列出入口文件（优先 _*.md）
+        entry_files=()
+        for f in "$d"/_*.md; do
+            [[ -f "$f" ]] && entry_files+=("$(basename "$f")")
+        done
+        if [[ "${#entry_files[@]}" -gt 0 ]]; then
+            CONTEXT+=" (入口: ${entry_files[*]})"
         fi
         CONTEXT+=$'\n'
     done
@@ -148,7 +153,7 @@ else
     CONTEXT+=$'\n'
     CONTEXT+="可选：运行初始化脚本："
     CONTEXT+=$'\n'
-    CONTEXT+="\`$SYSTEM_SKILL_ROOT/scripts/init-project-data.sh\`"
+    CONTEXT+="\`$SYSTEM_SKILL_ROOT/tools/loop/scripts/init-project-data.sh\`"
     CONTEXT+=$'\n\n'
 fi
 

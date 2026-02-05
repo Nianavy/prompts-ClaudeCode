@@ -59,12 +59,12 @@ You are orchestrating an automated task execution loop. Break down complex work 
 
 2. 获取真实 taskListId（更符合 AI 直觉，避免猜 ID）：
    ```bash
-   bash <SYSTEM_SKILL_ROOT>/scripts/find-task-list-id.sh "初始化 loop"
+   bash <SYSTEM_SKILL_ROOT>/tools/loop/scripts/find-task-list-id.sh "初始化 loop"
    ```
 
 3. Run init script to create loop directory and the agent prompt:
    ```bash
-   bash <SYSTEM_SKILL_ROOT>/scripts/init-loop.sh <taskListId> <slug>
+   bash <SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-loop.sh <taskListId> <slug>
    ```
    **slug 参数**：根据任务内容生成简短英文标识（如 `snake-game`、`auth-module`），避免中文和空格。
 
@@ -195,12 +195,12 @@ Agent prompt 模板（`_agent-prompt.md`）由 init-loop.sh 生成，包含：
 
    ✅ **正确**：
    ```bash
-   bash <SYSTEM_SKILL_ROOT>/scripts/end-loop.sh <taskListId>
+   bash <SYSTEM_SKILL_ROOT>/tools/loop/scripts/end-loop.sh <taskListId>
    ```
 
    ❌ **错误**（缺少 task_list_id 参数）：
    ```bash
-   bash <SYSTEM_SKILL_ROOT>/scripts/end-loop.sh
+   bash <SYSTEM_SKILL_ROOT>/tools/loop/scripts/end-loop.sh
    ```
 
 ---
@@ -218,6 +218,6 @@ Agent prompt 模板（`_agent-prompt.md`）由 init-loop.sh 生成，包含：
 
 ## Related Files
 
-- `loop/README.md` — Detailed documentation
-- `<SYSTEM_SKILL_ROOT>/scripts/init-loop.sh` — Initialize loop directory
-- `<SYSTEM_SKILL_ROOT>/scripts/end-loop.sh` — End loop manually
+- `tools/loop/README.md` — Detailed documentation
+- `<SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-loop.sh` — Initialize loop directory
+- `<SYSTEM_SKILL_ROOT>/tools/loop/scripts/end-loop.sh` — End loop manually

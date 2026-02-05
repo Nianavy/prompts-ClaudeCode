@@ -22,15 +22,15 @@ TaskCreate subject="初始化 loop" description="1. 初始化 loop 目录 2. 为
 ### Step 2: 获取 taskListId（更符合 AI 直觉）
 
 ```bash
-<SYSTEM_SKILL_ROOT>/scripts/find-task-list-id.sh "初始化 loop"
+<SYSTEM_SKILL_ROOT>/tools/loop/scripts/find-task-list-id.sh "初始化 loop"
 ```
 
 ### Step 3: 初始化 loop 目录
 
 ```bash
-<SYSTEM_SKILL_ROOT>/scripts/init-loop.sh <taskListId> <slug>
+<SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-loop.sh <taskListId> <slug>
 # 例如：
-<SYSTEM_SKILL_ROOT>/scripts/init-loop.sh abc-123-uuid login-feature
+<SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-loop.sh abc-123-uuid login-feature
 ```
 
 > 注意：init-loop.sh 运行很快，这一步建议前台运行以便拿到 `LOOP_DIR` 输出；从 `0.3.2` 起不再需要后台常驻 bind-loop（Stop Hook 通过 `/tmp/pensieve-loop-<taskListId>` 自动接管）。
@@ -206,7 +206,7 @@ Agent 返回后，主窗口执行自改进：
 
 ### 流程
 
-1. 读取 `pipelines/_self-improve.md`
+1. 读取 `tools/自改进/_self-improve.md`
 2. 对比 `_context.md` 事前/事后部分
 3. 填写事后 Context（偏差记录）
 4. 如有实质偏差，询问用户是否沉淀

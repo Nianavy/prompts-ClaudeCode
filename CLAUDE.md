@@ -23,10 +23,9 @@ Pensieve/                        # 仓库（插件部分）
         ├── SKILL.md              # Skill 入口
         ├── maxims/               # 系统准则
         ├── decisions/            # 决策格式规范
-        ├── pipelines/            # 流程
         ├── knowledge/            # 系统知识
-        ├── loop/                 # 执行层文档与模板（运行产物在项目数据目录）
-        └── scripts/              # 脚本工具
+        ├── tools/                # 内置工具（Loop / 自改进）
+        └── pipelines/            # 用户自定义流程（可选）
 
 项目级用户数据（永不被插件更新覆盖）：
 
@@ -41,14 +40,14 @@ Pensieve/                        # 仓库（插件部分）
 ## 安装方式
 
 1. **插件**：通过 `.claude/settings.json` 安装（URL 插件）
-2. **用户数据**：初始化项目级目录 `.claude/pensieve/`（可用 `skills/pensieve/scripts/init-project-data.sh`）
+2. **用户数据**：初始化项目级目录 `.claude/pensieve/`（可用 `skills/pensieve/tools/loop/scripts/init-project-data.sh`）
 
 ## 核心脚本
 
 | 脚本 | 用途 |
 |------|------|
-| `skills/pensieve/scripts/init-loop.sh <taskListId> <slug>` | 初始化 loop 目录 |
-| `skills/pensieve/scripts/end-loop.sh <taskListId>` | 结束指定 loop |
+| `skills/pensieve/tools/loop/scripts/init-loop.sh <taskListId> <slug>` | 初始化 loop 目录 |
+| `skills/pensieve/tools/loop/scripts/end-loop.sh <taskListId>` | 结束指定 loop |
 
 ## 文档解耦原则
 
@@ -56,7 +55,7 @@ Pensieve/                        # 仓库（插件部分）
 
 关键 README：
 - `skills/pensieve/SKILL.md` — Pensieve 总览
-- `skills/pensieve/loop/README.md` — Loop 机制详解
+- `skills/pensieve/tools/loop/README.md` — Loop 机制详解
 - `skills/pensieve/maxims/README.md` — 准则编写指南
 - `skills/pensieve/decisions/README.md` — 决策编写指南
 
@@ -70,7 +69,7 @@ Pensieve/                        # 仓库（插件部分）
 
 ## Loop 模式
 
-启动前**必须先读** `skills/pensieve/loop/README.md`，了解：
+启动前**必须先读** `skills/pensieve/tools/loop/README.md`，了解：
 - 职责划分（主窗口 vs task-executor）
 - 启动流程（Step 1-5）
 - 文件格式要求

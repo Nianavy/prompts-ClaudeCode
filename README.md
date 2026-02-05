@@ -134,7 +134,7 @@ mkdir -p .claude/pensieve/{maxims,decisions,knowledge,loop}
 Or run the plugin initializer (does not overwrite existing files). The absolute path is injected at SessionStart:
 
 ```bash
-<SYSTEM_SKILL_ROOT>/scripts/init-project-data.sh
+<SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-project-data.sh
 ```
 
 #### 4. Restart Claude Code
@@ -306,7 +306,7 @@ Say `capture` or `record this` to trigger the self-improve pipeline, which will 
 | Maxim | `.claude/pensieve/maxims/custom.md` | Edit this file |
 | Knowledge | `.claude/pensieve/knowledge/{name}/` | `content.md` |
 
-**Note**: System prompts (pipelines/scripts/system knowledge) are shipped inside the plugin and updated only via plugin updates.
+**Note**: System prompts (tools/scripts/system knowledge) are shipped inside the plugin and updated only via plugin updates.
 
 ---
 
@@ -328,12 +328,13 @@ pensieve/
 └── skills/
     └── pensieve/             # System skill (shipped in plugin)
         ├── SKILL.md
-        ├── pipelines/
+        ├── tools/
+        │   ├── loop/
+        │   └── 自改进/
         ├── maxims/
         ├── decisions/
         ├── knowledge/
-        ├── loop/             # Docs + templates (run outputs go to user data)
-        └── scripts/
+        └── pipelines/         # Optional user-defined pipelines
 
 <project>/
 └── .claude/

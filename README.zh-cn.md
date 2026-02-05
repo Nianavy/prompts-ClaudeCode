@@ -134,7 +134,7 @@ mkdir -p .claude/pensieve/{maxims,decisions,knowledge,loop}
 或运行插件内置初始化脚本（不会覆盖已有文件；绝对路径会在 SessionStart 注入）：
 
 ```bash
-<SYSTEM_SKILL_ROOT>/scripts/init-project-data.sh
+<SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-project-data.sh
 ```
 
 #### 4. 重启 Claude Code
@@ -306,7 +306,7 @@ Decision 指导 → Pipeline 改进
 | Maxim | `.claude/pensieve/maxims/custom.md` | 编辑此文件 |
 | Knowledge | `.claude/pensieve/knowledge/{name}/` | `content.md` |
 
-**注意**：系统提示词（pipelines/scripts/系统 knowledge）都在插件内，完全随插件更新维护。
+**注意**：系统提示词（tools/scripts/系统 knowledge）都在插件内，完全随插件更新维护。
 
 ---
 
@@ -328,12 +328,13 @@ pensieve/
 └── skills/
     └── pensieve/             # 系统 Skill（随插件更新）
         ├── SKILL.md
+        ├── tools/
+        │   ├── loop/
+        │   └── 自改进/
         ├── maxims/
         ├── decisions/
-        ├── pipelines/
         ├── knowledge/
-        ├── loop/             # 文档与模板（运行产物在用户数据目录）
-        └── scripts/
+        └── pipelines/         # 可选的用户自定义 pipelines
 
 <project>/
 └── .claude/

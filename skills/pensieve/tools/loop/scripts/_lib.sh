@@ -7,9 +7,21 @@
 
 plugin_root_from_script() {
     local script_dir="$1"
+    local dir
+    dir="$(cd "$script_dir" && pwd)"
+
+    while [[ "$dir" != "/" ]]; do
+        if [[ -d "$dir/.claude-plugin" ]]; then
+            echo "$dir"
+            return 0
+        fi
+        dir="$(cd "$dir/.." && pwd)"
+    done
+
+    # fallback: 尝试从路径中回退到 skills/pensieve
     local skill_root
-    skill_root="$(cd "$script_dir/.." && pwd)"           # .../skills/pensieve
-    cd "$skill_root/../.." && pwd                        # ... (plugin root)
+    skill_root="$(cd "$script_dir/../../.." && pwd)"  # .../skills/pensieve
+    cd "$skill_root/../.." && pwd                     # ... (plugin root)
 }
 
 project_root() {

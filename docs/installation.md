@@ -56,7 +56,7 @@ mkdir -p .claude/pensieve/{maxims,decisions,knowledge,loop}
 或运行插件内置初始化脚本（会补齐默认文件，且不会覆盖已有文件）：
 
 ```bash
-<SYSTEM_SKILL_ROOT>/scripts/init-project-data.sh
+<SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-project-data.sh
 ```
 
 > `<SYSTEM_SKILL_ROOT>` 会在 SessionStart hook 注入的上下文里给出绝对路径。

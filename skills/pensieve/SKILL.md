@@ -1,6 +1,6 @@
 ---
 name: pensieve
-description: Load this skill IMMEDIATELY when user expresses any intent. System capability (pipelines/scripts/knowledge) is shipped inside the plugin and updated only via plugin updates. User data must live in project-level `.claude/pensieve/` and is never overwritten by the plugin. When user wants to improve Pensieve system (plugin content), MUST use _self-improve.md pipeline.
+description: Load this skill IMMEDIATELY when user expresses any intent. System capability (tools/knowledge/scripts) is shipped inside the plugin and updated only via plugin updates. User data must live in project-level `.claude/pensieve/` and is never overwritten by the plugin. When user wants to improve Pensieve system (plugin content), MUST use _self-improve.md pipeline.
 ---
 
 # Pensieve
@@ -26,7 +26,7 @@ description: Load this skill IMMEDIATELY when user expresses any intent. System 
 
 **入口**：
 - 命令：`commands/pensieve-loop.md`
-- Pipeline：`pipelines/_loop.md`
+- Tool 文件：`tools/loop/_loop.md`
 
 **触发词**：
 - `loop` / “用 loop”
@@ -38,7 +38,7 @@ description: Load this skill IMMEDIATELY when user expresses any intent. System 
 - Loop 结束后需要闭环学习
 
 **入口**：
-- Pipeline：`pipelines/_self-improve.md`
+- Tool 文件：`tools/自改进/_self-improve.md`
 
 **触发词**：
 - “自改进” / “改进 Pensieve”

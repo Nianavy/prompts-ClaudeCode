@@ -6,7 +6,7 @@ description: 知识沉淀流程。当 loop 完成、用户说"沉淀"、"记录�
 
 You are helping capture learnings and patterns into Pensieve's knowledge system.
 
-**System prompts** (pipelines/scripts/system knowledge) live in the plugin and are updated only via plugin updates.
+**System prompts** (tools/scripts/system knowledge) live in the plugin and are updated only via plugin updates.
 
 **User data** lives in project-level `.claude/pensieve/` and is never overwritten by the plugin.
 
@@ -98,7 +98,7 @@ Determine what's worth preserving, categorize it correctly, and write it in the 
 1. Draft the file content following README specifications
 
 2. Choose the target location:
-   - **pipeline** → `<SYSTEM_SKILL_ROOT>/pipelines/{name}.md` (system prompt, plugin-managed)
+   - **pipeline** → `<SYSTEM_SKILL_ROOT>/tools/{tool}/{name}.md` (system prompt, plugin-managed)
    - **maxim** → `.claude/pensieve/maxims/{name}.md` (project user data)
    - **decision** → `.claude/pensieve/decisions/{date}-{conclusion}.md` (project user data)
    - **knowledge** → `.claude/pensieve/knowledge/{name}/content.md` (project user data)
@@ -138,7 +138,7 @@ Determine what's worth preserving, categorize it correctly, and write it in the 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐  │
-│  │   maxims/   │   │ decisions/  │   │ pipelines/  │   │ knowledge/  │  │
+│  │   maxims/   │   │ decisions/  │   │  tools/     │   │ knowledge/  │  │
 │  │  未来指导    │ ← │  过去经验    │   │  工作定义    │   │  外部输入    │  │
 │  └─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘  │
 └─────────────────────────────────────────────────────────────────┘

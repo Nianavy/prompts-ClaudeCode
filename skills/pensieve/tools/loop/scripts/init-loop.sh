@@ -12,13 +12,15 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILL_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+TOOL_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 source "$SCRIPT_DIR/_lib.sh"
 
 # 插件根目录（系统能力）
 PLUGIN_ROOT="$(plugin_root_from_script "$SCRIPT_DIR")"
 SYSTEM_SKILL_ROOT="$PLUGIN_ROOT/skills/pensieve"
+TOOLS_ROOT="$SYSTEM_SKILL_ROOT/tools"
+LOOP_TOOL_ROOT="$TOOLS_ROOT/loop"
 
 # 用户数据（loop 产物）在项目级，不随插件更新覆盖
 DATA_ROOT="$(ensure_user_data_root)"
@@ -55,7 +57,7 @@ if [[ "$TASK_LIST_ID" == "default" ]]; then
     echo "请使用真实的 taskListId："
     echo "- 优先从 TaskCreate 的返回中复制"
     echo "- 如果没有看到 taskListId，说明你可能没有调用 TaskCreate 工具（只是输出了文本）；请重新调用 TaskCreate 并展开工具输出"
-    echo "- 或使用: $SYSTEM_SKILL_ROOT/scripts/find-task-list-id.sh \"初始化 loop\""
+    echo "- 或使用: $LOOP_TOOL_ROOT/scripts/find-task-list-id.sh \"初始化 loop\""
     exit 1
 fi
 
@@ -67,7 +69,7 @@ if [[ ! -d "$TASKS_DIR" ]]; then
     echo "请确保使用真实的 taskListId："
     echo "- 优先从 TaskCreate 的返回中复制"
     echo "- 如果没有看到 taskListId，请展开工具输出（例如 ctrl+o）查看返回的 JSON"
-    echo "- 或使用: $SYSTEM_SKILL_ROOT/scripts/find-task-list-id.sh \"初始化 loop\""
+    echo "- 或使用: $LOOP_TOOL_ROOT/scripts/find-task-list-id.sh \"初始化 loop\""
     exit 1
 fi
 

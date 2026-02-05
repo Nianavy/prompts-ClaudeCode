@@ -2,6 +2,8 @@
 
 可执行的工作流程。定义从输入到验证的完整回路。
 
+> 说明：Pensieve 内置的两个核心工具（Loop / Self‑Improve）已经迁移到 `tools/` 目录；`pipelines/` 主要用于用户/项目自定义流程。
+
 ## 目的
 
 Pipeline 存在的理由是**构建可验证的执行回路**。
@@ -96,7 +98,6 @@ Pipeline 定义回路，Tasks 是回路中的具体行动。
 
 ```
 pipelines/
-├── _self-improve.md    # 内置（下划线前缀）
 ├── review.md           # 用户定义
 └── {name}.md
 ```
@@ -105,7 +106,7 @@ pipelines/
 
 | 前缀 | 类型 | 说明 |
 |------|------|------|
-| `_` | 内置 | pensieve 系统核心流程，如 `_self-improve.md` |
+| `_` | 预留 | 系统内置流程已迁移到 `tools/` |
 | 无 | 用户定义 | 项目/业务相关流程，如 `review.md` |
 
 ### 文件格式
