@@ -161,6 +161,8 @@ loop-controller.sh 检查
 └── 全部完成 → 正常结束
 ```
 
+> 多会话支持：marker 里记录了当前会话的 `claude_pid`，Stop Hook 只会匹配当前会话的 marker。
+
 ## 强化信息
 
 每次继续执行时注入：

@@ -21,6 +21,18 @@ HOOK_INPUT=$(cat)
 # }
 log() { :; }  # no-op
 
+# 获取文件修改时间（秒），兼容 macOS / Linux
+get_mtime() {
+    local file="$1"
+    if stat -f %m "$file" >/dev/null 2>&1; then
+        stat -f %m "$file"
+    elif stat -c %Y "$file" >/dev/null 2>&1; then
+        stat -c %Y "$file"
+    else
+        echo 0
+    fi
+}
+
 # 获取当前 Claude 进程 PID（用于绑定 marker）
 get_claude_pid() {
     local pid="$$"
@@ -67,6 +79,7 @@ log "Hook triggered pid=$$ ppid=$PPID claude_pid=$CURRENT_CLAUDE_PID session_pid
 MARKER_FILE=""
 TASK_LIST_ID=""
 LOOP_DIR=""
+BEST_MTIME=0
 
 for marker in /tmp/pensieve-loop-*; do
     [[ -f "$marker" ]] || continue
@@ -90,11 +103,14 @@ for marker in /tmp/pensieve-loop-*; do
         continue
     fi
 
-    MARKER_FILE="$marker"
-    TASK_LIST_ID="$local_task_id"
-    LOOP_DIR="$local_loop_dir"
-    log "marker selected: $marker"
-    break
+    local_mtime=$(get_mtime "$marker")
+    if [[ "$MARKER_FILE" == "" || "$local_mtime" -gt "$BEST_MTIME" ]]; then
+        MARKER_FILE="$marker"
+        TASK_LIST_ID="$local_task_id"
+        LOOP_DIR="$local_loop_dir"
+        BEST_MTIME="$local_mtime"
+        log "marker candidate: $marker (mtime=$local_mtime)"
+    fi
 done
 
 if [[ -z "$MARKER_FILE" ]]; then
