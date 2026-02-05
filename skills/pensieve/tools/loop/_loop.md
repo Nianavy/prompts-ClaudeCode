@@ -142,6 +142,16 @@ You are orchestrating an automated task execution loop. Break down complex work 
 
 **CRITICAL**: Do not proceed without user confirmation from Phase 3.
 
+### 先获取可用 pipeline（用于任务设计）
+
+在拆分任务前，先用脚本列出当前项目的所有 pipelines 和描述，判断是否存在可复用流程：
+
+```bash
+bash <SYSTEM_SKILL_ROOT>/tools/pipeline/scripts/list-pipelines.sh
+```
+
+如果存在相关 pipeline，应优先基于它拆分 task；如果不存在，再按常规方式拆分。
+
 ### 任务粒度标准
 
 **核心判断：agent 能否不问问题就执行？**
