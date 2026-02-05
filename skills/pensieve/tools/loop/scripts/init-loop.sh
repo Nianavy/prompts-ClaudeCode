@@ -109,6 +109,7 @@ if command -v jq >/dev/null 2>&1; then
           task_list_id: $task_list_id,
           loop_dir: $loop_dir,
           started_at: $started_at,
+          tasks_planned: false,
           claude_pid: (if $claude_pid == "" then null else ($claude_pid | tonumber) end),
           session_pid: (if $session_pid == "" then null else ($session_pid | tonumber) end)
         }' > "$MARKER_FILE"
@@ -118,6 +119,7 @@ else
   "task_list_id": "$TASK_LIST_ID",
   "loop_dir": "$LOOP_DIR",
   "started_at": "$TIMESTAMP",
+  "tasks_planned": false,
   "claude_pid": "${CLAUDE_PID:-}",
   "session_pid": "${SESSION_PID:-}"
 }

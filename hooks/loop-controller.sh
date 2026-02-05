@@ -117,6 +117,28 @@ LOOP_DIR=""
 META_FILE=""
 CONTEXT_FILE=""
 TASKS_DIR=""
+MARKER_TASKS_PLANNED="false"
+
+update_marker_tasks_planned() {
+    local total="$1"
+    local pending="$2"
+    local in_progress="$3"
+    local tmp_file="${MARKER_FILE}.tmp"
+    local now
+    now=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    jq \
+        --arg now "$now" \
+        --argjson total "$total" \
+        --argjson pending "$pending" \
+        --argjson in_progress "$in_progress" \
+        '.tasks_planned = true
+        | .last_seen_at = $now
+        | .last_seen_total = $total
+        | .last_seen_pending = $pending
+        | .last_seen_in_progress = $in_progress' \
+        "$MARKER_FILE" > "$tmp_file" && mv "$tmp_file" "$MARKER_FILE"
+    MARKER_TASKS_PLANNED="true"
+}
 
 # ============================================
 # 辅助函数
@@ -207,14 +229,19 @@ count_tasks() {
     echo "$total $completed $pending $in_progress"
 }
 
-check_all_completed() {
-    local stats
-    stats=$(count_tasks)
-    local total completed pending in_progress
-    read -r total completed pending in_progress <<< "$stats"
+check_all_completed_with_stats() {
+    local total="$1"
+    local pending="$2"
+    local in_progress="$3"
 
-    # total==0: 仍处于 setup（仅有占位 task）→ 不结束
-    [[ "$total" -gt 0 && "$pending" -eq 0 && "$in_progress" -eq 0 ]]
+    # total==0:
+    # - tasks_planned=false → 仍处于 setup（仅有占位 task）→ 不结束
+    # - tasks_planned=true  → 任务已完成且已被系统清理 → 视为结束
+    if [[ "$total" -eq 0 ]]; then
+        [[ "$MARKER_TASKS_PLANNED" == "true" ]]
+    else
+        [[ "$pending" -eq 0 && "$in_progress" -eq 0 ]]
+    fi
 }
 
 mark_in_progress() {
@@ -295,14 +322,41 @@ main() {
         META_FILE="$LOOP_DIR/_meta.md"
         CONTEXT_FILE="$LOOP_DIR/_context.md"
         TASKS_DIR="$HOME/.claude/tasks/$TASK_LIST_ID"
+        MARKER_TASKS_PLANNED=$(jq -r '.tasks_planned // false' "$MARKER_FILE" 2>/dev/null) || MARKER_TASKS_PLANNED="false"
 
         if [[ ! -d "$TASKS_DIR" ]]; then
+            if [[ "$MARKER_TASKS_PLANNED" == "true" ]]; then
+                local self_improve_path
+                self_improve_path="$SYSTEM_SKILL_ROOT/tools/self-improve/_self-improve.md"
+
+                rm -f "$MARKER_FILE"
+
+                jq -n \
+                    --arg msg "✅ Loop 完成 | 是否自优化？" \
+                    --arg path "$self_improve_path" \
+                    '{
+                        "decision": "block",
+                        "reason": ("所有任务已完成（任务数据已被系统清理）。是否执行自优化？\n\nPipeline 路径：\n- " + $path + "\n\n如需自优化，请按该 pipeline 执行；不执行也可以。Loop 已停止。"),
+                        "systemMessage": $msg
+                    }'
+                exit 0
+            fi
+
             rm -f "$MARKER_FILE"
             log "tasks dir missing, marker removed: $TASKS_DIR"
             continue
         fi
 
-        if check_all_completed; then
+        local stats
+        stats=$(count_tasks)
+        local total completed pending in_progress
+        read -r total completed pending in_progress <<< "$stats"
+
+        if [[ "$total" -gt 0 && "$MARKER_TASKS_PLANNED" != "true" ]]; then
+            update_marker_tasks_planned "$total" "$pending" "$in_progress"
+        fi
+
+        if check_all_completed_with_stats "$total" "$pending" "$in_progress"; then
             local self_improve_path
             self_improve_path="$SYSTEM_SKILL_ROOT/tools/self-improve/_self-improve.md"
 
