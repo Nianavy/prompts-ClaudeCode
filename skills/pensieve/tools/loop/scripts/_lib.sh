@@ -41,6 +41,50 @@ ensure_user_data_root() {
     echo "$dr"
 }
 
+python_bin() {
+    command -v python3 || command -v python
+}
+
+json_get_value() {
+    local file="$1"
+    local key="$2"
+    local default_value="${3:-}"
+    local py
+    py="$(python_bin)" || {
+        echo "$default_value"
+        return 0
+    }
+
+    "$py" - "$file" "$key" "$default_value" <<'PY'
+import json
+import sys
+
+file_path, key, default_value = sys.argv[1], sys.argv[2], sys.argv[3]
+try:
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+except Exception:
+    print(default_value)
+    sys.exit(0)
+
+if not isinstance(data, dict):
+    print(default_value)
+    sys.exit(0)
+
+value = data.get(key)
+if value is None:
+    print(default_value)
+elif isinstance(value, bool):
+    print("true" if value else "false")
+elif isinstance(value, (int, float)):
+    print(value)
+elif isinstance(value, str):
+    print(value)
+else:
+    print(default_value)
+PY
+}
+
 # ============================================
 # Claude Code process detection (for Loop marker binding)
 # ============================================
@@ -110,7 +154,7 @@ find_active_loop() {
         for task_file in "$tasks_dir"/*.json; do
             [[ -f "$task_file" ]] || continue
             local status
-            status=$(jq -r '.status' "$task_file" 2>/dev/null)
+            status=$(json_get_value "$task_file" "status" "")
             if [[ "$status" == "pending" || "$status" == "in_progress" ]]; then
                 echo "${loop_dir%/}"
                 return 0

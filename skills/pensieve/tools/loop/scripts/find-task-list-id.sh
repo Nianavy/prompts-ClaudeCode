@@ -7,6 +7,7 @@ set -euo pipefail
 
 SUBJECT="${1:-Initialize loop}"
 TASKS_BASE="$HOME/.claude/tasks"
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 || command -v python || true)}"
 
 if [[ ! -d "$TASKS_BASE" ]]; then
     echo "Error: task directory does not exist: $TASKS_BASE" >&2
@@ -15,11 +16,35 @@ fi
 
 matches=()
 
+dir_has_subject() {
+    local dir="$1"
+    local subject="$2"
+
+    [[ -n "$PYTHON_BIN" ]] || return 1
+
+    "$PYTHON_BIN" - "$dir" "$subject" <<'PY'
+import glob
+import json
+import sys
+
+directory, subject = sys.argv[1], sys.argv[2]
+for path in glob.glob(f"{directory}/*.json"):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        continue
+    if isinstance(data, dict) and data.get("subject") == subject:
+        sys.exit(0)
+sys.exit(1)
+PY
+}
+
 for dir in "$TASKS_BASE"/*; do
     [[ -d "$dir" ]] || continue
 
-    if command -v jq >/dev/null 2>&1; then
-        if jq -e --arg subj "$SUBJECT" '.subject == $subj' "$dir"/*.json >/dev/null 2>&1; then
+    if [[ -n "$PYTHON_BIN" ]]; then
+        if dir_has_subject "$dir" "$SUBJECT"; then
             matches+=("$dir")
         fi
     else

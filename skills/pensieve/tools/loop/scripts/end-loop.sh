@@ -8,6 +8,52 @@
 
 set -euo pipefail
 
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 || command -v python || true)}"
+[[ -n "$PYTHON_BIN" ]] || {
+    echo "Error: python3 is required but not found" >&2
+    exit 1
+}
+
+json_get_value() {
+    local file="$1"
+    local key="$2"
+    local default_value="${3:-}"
+
+    [[ -n "$PYTHON_BIN" ]] || {
+        echo "$default_value"
+        return 0
+    }
+
+    "$PYTHON_BIN" - "$file" "$key" "$default_value" <<'PY'
+import json
+import sys
+
+file_path, key, default_value = sys.argv[1], sys.argv[2], sys.argv[3]
+try:
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+except Exception:
+    print(default_value)
+    sys.exit(0)
+
+if not isinstance(data, dict):
+    print(default_value)
+    sys.exit(0)
+
+value = data.get(key)
+if value is None:
+    print(default_value)
+elif isinstance(value, bool):
+    print("true" if value else "false")
+elif isinstance(value, (int, float)):
+    print(value)
+elif isinstance(value, str):
+    print(value)
+else:
+    print(default_value)
+PY
+}
+
 # ============================================
 # Argument parsing
 # ============================================
@@ -37,8 +83,9 @@ end_loop_by_marker() {
     [[ -f "$marker" ]] || return 1
 
     local task_id loop_dir pid
-    task_id=$(jq -r '.task_list_id' "$marker" 2>/dev/null) || return 1
-    loop_dir=$(jq -r '.loop_dir' "$marker" 2>/dev/null) || return 1
+    task_id=$(json_get_value "$marker" "task_list_id" "") || return 1
+    loop_dir=$(json_get_value "$marker" "loop_dir" "") || return 1
+    [[ -n "$task_id" && -n "$loop_dir" ]] || return 1
 
     echo "Stopping Loop: $task_id"
     echo "  Directory: $loop_dir"
@@ -77,7 +124,8 @@ else
         echo "Active loops:"
         for marker in /tmp/pensieve-loop-*; do
             [[ -f "$marker" ]] || continue
-            task_id=$(jq -r '.task_list_id' "$marker" 2>/dev/null) || continue
+            task_id=$(json_get_value "$marker" "task_list_id" "") || continue
+            [[ -n "$task_id" ]] || continue
             echo "  - $task_id"
         done
         exit 1

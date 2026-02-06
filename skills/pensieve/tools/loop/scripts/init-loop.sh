@@ -98,21 +98,34 @@ mkdir -p "$LOOP_DIR"
 CLAUDE_PID="$(find_claude_pid || true)"
 SESSION_PID="$(find_claude_session_pid || true)"
 
-if command -v jq >/dev/null 2>&1; then
-    jq -n \
-        --arg task_list_id "$TASK_LIST_ID" \
-        --arg loop_dir "$LOOP_DIR" \
-        --arg started_at "$TIMESTAMP" \
-        --arg claude_pid "$CLAUDE_PID" \
-        --arg session_pid "$SESSION_PID" \
-        '{
-          task_list_id: $task_list_id,
-          loop_dir: $loop_dir,
-          started_at: $started_at,
-          tasks_planned: false,
-          claude_pid: (if $claude_pid == "" then null else ($claude_pid | tonumber) end),
-          session_pid: (if $session_pid == "" then null else ($session_pid | tonumber) end)
-        }' > "$MARKER_FILE"
+if PYTHON_BIN="$(python_bin)"; then
+    PENSIEVE_TASK_LIST_ID="$TASK_LIST_ID" \
+    PENSIEVE_LOOP_DIR="$LOOP_DIR" \
+    PENSIEVE_STARTED_AT="$TIMESTAMP" \
+    PENSIEVE_CLAUDE_PID="${CLAUDE_PID:-}" \
+    PENSIEVE_SESSION_PID="${SESSION_PID:-}" \
+    "$PYTHON_BIN" - "$MARKER_FILE" <<'PY'
+import json
+import os
+import sys
+
+marker_path = sys.argv[1]
+claude_pid_raw = os.environ.get("PENSIEVE_CLAUDE_PID", "").strip()
+session_pid_raw = os.environ.get("PENSIEVE_SESSION_PID", "").strip()
+
+payload = {
+    "task_list_id": os.environ.get("PENSIEVE_TASK_LIST_ID", ""),
+    "loop_dir": os.environ.get("PENSIEVE_LOOP_DIR", ""),
+    "started_at": os.environ.get("PENSIEVE_STARTED_AT", ""),
+    "tasks_planned": False,
+    "claude_pid": int(claude_pid_raw) if claude_pid_raw else None,
+    "session_pid": int(session_pid_raw) if session_pid_raw else None,
+}
+
+with open(marker_path, "w", encoding="utf-8") as f:
+    json.dump(payload, f, ensure_ascii=False, indent=2)
+    f.write("\n")
+PY
 else
     cat > "$MARKER_FILE" << EOF
 {

@@ -9,7 +9,8 @@
 
 set -euo pipefail
 
-command -v jq >/dev/null 2>&1 || exit 0
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 || command -v python || true)}"
+[[ -n "$PYTHON_BIN" ]] || exit 0
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
@@ -42,7 +43,25 @@ get_claude_pid() {
 
 for marker in /tmp/pensieve-loop-*; do
     [[ -f "$marker" ]] || continue
-    marker_claude_pid=$(jq -r '.claude_pid // empty' "$marker" 2>/dev/null) || true
+    marker_claude_pid=$("$PYTHON_BIN" - "$marker" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+try:
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+except Exception:
+    print("")
+    sys.exit(0)
+
+value = data.get("claude_pid")
+if value is None:
+    print("")
+else:
+    print(value)
+PY
+) || true
     [[ -n "$marker_claude_pid" ]] || continue
     if ! kill -0 "$marker_claude_pid" 2>/dev/null; then
         rm -f "$marker" 2>/dev/null || true
@@ -168,9 +187,16 @@ fi
 
 CONTEXT+="Usage: name a pipeline or intent, and I will load and run the corresponding flow."
 
-jq -n --arg ctx "$CONTEXT" '{
-  hookSpecificOutput: {
-    hookEventName: "SessionStart",
-    additionalContext: $ctx
-  }
-}'
+PENSIEVE_CONTEXT="$CONTEXT" "$PYTHON_BIN" - <<'PY'
+import json
+import os
+
+context = os.environ.get("PENSIEVE_CONTEXT", "")
+payload = {
+    "hookSpecificOutput": {
+        "hookEventName": "SessionStart",
+        "additionalContext": context,
+    }
+}
+print(json.dumps(payload, ensure_ascii=False))
+PY
