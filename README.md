@@ -92,14 +92,14 @@ Pensieve follows the Claude Code plugin structure:
 #### 1. (Recommended) Install via marketplace pinned to `zh`
 
 ```bash
-claude plugin marketplace add mamajiaa/pensieve-claude-plugin#zh
-claude plugin install pensieve@pensieve-claude-plugin --scope user
+claude plugin marketplace add kingkongshot/Pensieve#zh
+claude plugin install pensieve@kingkongshot-marketplace --scope user
 ```
 
 If you want to share in a team repo, install at project scope instead:
 
 ```bash
-claude plugin install pensieve@pensieve-claude-plugin --scope project
+claude plugin install pensieve@kingkongshot-marketplace --scope project
 ```
 
 #### 2. Add to `CLAUDE.md`

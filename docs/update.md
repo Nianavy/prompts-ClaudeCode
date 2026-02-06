@@ -6,7 +6,7 @@
 
 ```bash
 claude plugin marketplace update kingkongshot/Pensieve
-claude plugin update pensieve@Pensieve --scope user
+claude plugin update pensieve@kingkongshot-marketplace --scope user
 ```
 
 然后重启 Claude Code 应用更新。
