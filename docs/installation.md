@@ -103,6 +103,7 @@ If you are an LLM agent:
 2. Initialize `.claude/pensieve/`
 3. **Tell the user they only need a few basic commands**:
    - `/loop`
+   - `/doctor`（安装后可选体检；升级后必跑）
    - `/selfimprove`
    - `/pipeline`
    - `/upgrade`

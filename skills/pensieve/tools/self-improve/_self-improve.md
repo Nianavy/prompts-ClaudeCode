@@ -10,6 +10,12 @@ description: Knowledge capture workflow. Trigger when loop completes or user say
 
 **用户数据**位于项目级 `.claude/pensieve/`，永不被插件更新覆盖。
 
+## 职责边界（Hard Rule）
+
+- `/selfimprove` 只负责沉淀与改进，不负责全量迁移体检。
+- 迁移/结构合规体检由 `/doctor` 负责。
+- 若执行中发现“旧路径并行、目录缺失、格式大面积不符”等问题，先建议运行 `/doctor`，必要时转 `/upgrade`。
+
 ## 核心原则
 
 - **必须用户确认**：绝不自动沉淀，先询问

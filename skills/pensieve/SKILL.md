@@ -19,7 +19,7 @@ Route user intent to the right tool/pipeline.
   - `pipelines/`: project pipelines (seeded on install)
   - `loop/`: loop run outputs (one dir per loop)
 
-## Built-in Tools (4)
+## Built-in Tools (5)
 
 ### 1) Loop Tool
 
@@ -58,7 +58,21 @@ Route user intent to the right tool/pipeline.
 **Triggers**:
 - "pipeline" / "use pipeline"
 
-### 4) Upgrade Tool
+### 4) Doctor Tool
+
+**When to use**:
+- Mandatory post-upgrade verification (structure/format compliance)
+- Optional post-install quick health check
+- User asks for user-data health check
+
+**Entry**:
+- Command: `commands/doctor.md`
+- Tool file: `tools/doctor/_doctor.md`
+
+**Triggers**:
+- "doctor" / "health check" / "检查格式" / "检查迁移"
+
+### 5) Upgrade Tool
 
 **When to use**:
 - User needs to migrate legacy data into `.claude/pensieve/`
