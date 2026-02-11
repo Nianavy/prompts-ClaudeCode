@@ -1,22 +1,6 @@
 ---
 name: review
-description: |
-  代码审查 pipeline。基于 Linus Torvalds 的品味哲学、John Ousterhout 的设计原则与 Google Code Review 标准。
-
-  在以下情况使用此 pipeline：
-  - 用户明确要求代码审查
-  - 用户说“review”“代码审查”“帮我检查代码”
-  - 需要评估代码质量或设计决策
-
-  示例：
-  <example>
-  User: "帮我 review 这段代码"
-  -> 触发此 pipeline
-  </example>
-  <example>
-  User: "检查这个 PR"
-  -> 触发此 pipeline
-  </example>
+description: 代码审查 pipeline。触发词：review / 代码审查 / 检查代码。
 
 stages: [tasks]
 gate: auto
@@ -24,7 +8,7 @@ gate: auto
 
 # 代码审查 Pipeline
 
-这个 pipeline 负责把代码审查直接映射成可执行 task 列表。审查标准与深层依据统一放在 Knowledge 中。
+这个 pipeline 只负责任务编排。审查标准与深层依据统一放在 Knowledge 中，避免在本文件重复展开。
 
 **Knowledge 参考**：`<SYSTEM_SKILL_ROOT>/knowledge/taste-review/content.md`
 
@@ -63,7 +47,7 @@ gate: auto
 2. `<SYSTEM_SKILL_ROOT>/knowledge/taste-review/content.md`
 
 **执行步骤**：
-1. 对每个文件执行审查清单（不在此重复理论）
+1. 对每个文件执行审查清单（理论与依据见 Knowledge，不在此文件复制）
 2. 按严重级别记录结论：PASS / WARNING / CRITICAL
 3. 对每条 WARNING/CRITICAL 标注精确代码位置
 4. 记录用户可见行为变化风险（若有）

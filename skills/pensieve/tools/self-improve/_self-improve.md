@@ -24,6 +24,7 @@ description: Knowledge capture workflow. Trigger when loop completes or user say
 - **结论优先**：标题与第一句话必须能独立表达结论
 - **关系可追溯**：通过 `基于/导致/相关` 建立关联
 - **准则单文件**：每条 `maxim` 必须是独立文件，不依赖索引文件
+- **流程只做编排**：`pipeline` 只保留 task 编排与验证；理论背景必须外链
 
 ---
 
@@ -93,7 +94,10 @@ description: Knowledge capture workflow. Trigger when loop completes or user say
 4. 按类型补链接：
    - decision/pipeline：至少 1 条有效 `[[...]]`
    - knowledge/maxim：可选但建议
-5. 向用户展示草稿并等待确认
+5. 若是 `pipeline` 草稿，额外自检：
+   - 哪些段落不影响 task 编排？
+   - 这些段落是否已拆到 `knowledge/decision/maxim` 并改为链接？
+6. 向用户展示草稿并等待确认
 
 ---
 

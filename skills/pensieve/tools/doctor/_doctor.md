@@ -71,6 +71,7 @@ Hard rule：
 2. Hard rule 违规：违反 README 中明确的 `must / required / hard rule / at least one`。
 3. 可追溯性断裂：`decision` 或 `pipeline` 缺少必需链接字段，或链接全部无效，导致上下文不可追溯。
 4. 基础结构缺失：用户数据根目录或关键分类目录缺失，导致流程无法运行。
+5. 流程失焦：`pipeline` 以大段知识堆叠替代 task 编排，且未拆分为链接引用。
 
 ### SHOULD_FIX
 

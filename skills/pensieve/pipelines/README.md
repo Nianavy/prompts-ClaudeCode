@@ -15,6 +15,21 @@ Pipeline 负责编排流程，不负责存储知识。背景信息应拆到其�
 - **Decisions**：上下文决策与理由
 - **外部 skills/tools**：专用能力与重指令
 
+## 写 Pipeline 前的反问（必须）
+
+在落笔前先问：
+
+**“这段内容是否直接改变 task 的顺序、输入、步骤或完成标准？”**
+
+- 如果答案是“否”，这段内容不应放在 pipeline 主体，必须拆出去并用 `[[...]]` 引用。
+- 如果答案是“是”，才保留在 pipeline 主体。
+
+快速拆分规则：
+1. 原理、理论、长解释 -> `knowledge`
+2. 项目取舍、策略结论 -> `decision`
+3. 跨场景原则 -> `maxim`
+4. pipeline 仅保留：任务编排 + 验证闭环 + 关键约束
+
 闭环模型：
 
 ```
@@ -94,6 +109,9 @@ Input -> Execute -> Validate -> Output
 - `基于`：依赖哪些 decision/knowledge
 - `导致`：触发哪些输出或后续流程
 - `相关`：相邻流程或关联主题
+
+Hard rule：
+- 任何不直接服务于任务编排的长段落，都必须迁移到被链接文件中。
 
 ## Pipeline 与 Tasks 区分
 
@@ -203,6 +221,7 @@ Role: You are [doing what]...
 | Role 行 | 以 "You are..." 开头定义角色 |
 | 核心原则 | 1-3 条，短且可执行 |
 | 不堆知识 | 长背景放到 Knowledge/Maxims/Decisions/Skills |
+| 内容拆分 | 若段落不影响 task 编排，必须拆分并改为 `[[...]]` 引用 |
 | Task Blueprint | 必须显式 `Task 1/2/3...` 顺序 |
 | **Goal** | 每个任务必须有 |
 | **Read Inputs** | 文件/路径必须写清 |
