@@ -59,6 +59,10 @@ Legacy candidate paths (as defined by upgrade specs):
 - `<project>/.claude/skills/pensieve/`
 - other historical user-data paths from upgrade rules
 
+Plugin activation config (for naming consistency checks):
+- `~/.claude/settings.json`
+- `<project>/.claude/settings.json`
+
 ---
 
 ## Severity Rules
@@ -72,6 +76,8 @@ Mark MUST_FIX when any of these is true:
 4. Missing base structure: required root/category directories are missing.
 5. Pipeline drift: large knowledge dump replaces orchestration and no linked decomposition exists.
 6. Naming violation: pipeline filename is not `run-when-*.md` (including legacy `review.md`).
+7. Initialization gap: user-data root exists but seed files are missing (e.g., empty `maxims/*.md` or missing `pipelines/run-when-reviewing-code.md`).
+8. Plugin-key conflict: `enabledPlugins` keeps old and new Pensieve keys in parallel, or misses the new key.
 
 ### SHOULD_FIX
 
@@ -98,6 +104,7 @@ Extract:
 
 - Scan `.claude/pensieve/**`
 - Scan legacy candidate paths
+- Scan Pensieve-related `enabledPlugins` keys in user/project `settings.json`
 - Produce pass/fail/unknown per rule
 
 ### Phase 2.2: Mandatory frontmatter quick check

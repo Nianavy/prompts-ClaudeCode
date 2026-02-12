@@ -10,6 +10,12 @@ Hard rule: clean up old plugin naming first, then migrate user data. Do not keep
 Hard rule: after upgrade/migration, run one mandatory doctor check.
 Hard rule: do not treat "run doctor before upgrade" as a gate; default flow is upgrade-first.
 
+## Responsibility Boundary (Upgrade vs Doctor)
+
+- Upgrade only executes migration actions (create/copy/rename/clean/merge).
+- Upgrade should not output `PASS/FAIL` or `MUST_FIX/SHOULD_FIX` diagnosis.
+- Compliance judgment is owned by `/doctor`; Upgrade only reports actions performed.
+
 ## Target Structure (Project-Level, Never Overwritten by Plugin)
 
 ```
@@ -96,16 +102,16 @@ In `enabledPlugins`:
 
 If multiple keys exist, do not keep compatibility keys. Leave only the new key.
 
-## Migration Steps (Best done by an LLM)
+## Migration Steps (Best done by an LLM, execution-focused)
 
-1. Scan and check:
+1. Read and locate:
    - `~/.claude/settings.json`
    - `<project>/.claude/settings.json`
 2. Clean old `enabledPlugins` keys and keep/add only the new key.
 3. Clean old install references:
    - uninstall `pensieve@Pensieve` if present
    - uninstall `pensieve@pensieve-claude-plugin` if present
-4. Scan old locations for user content (using the rules above).
+4. Locate old user content and execute migration by rules above.
 5. Create target directories:
    - `mkdir -p .claude/pensieve/{maxims,decisions,knowledge,pipelines,loop}`
 6. Merge maxims:
@@ -126,7 +132,7 @@ If multiple keys exist, do not keep compatibility keys. Leave only the new key.
    - different: append with migration marker or create `*.migrated.md`
 11. Clean old system copies listed above.
 12. Output a migration report (old path -> new path).
-13. Mandatory post-upgrade check:
+13. Mandatory post-upgrade check (Doctor is the judge):
    - run `/doctor`
    - if doctor reports migration/structure issues, keep fixing until PASS or PASS_WITH_WARNINGS
    - then run `/selfimprove` optionally
@@ -154,3 +160,4 @@ claude plugin update pensieve@kingkongshot-marketplace --scope user
 - Do not delete plugin internal system files.
 - Do not modify plugin-managed system content.
 - You may edit `settings.json` only for Pensieve-related `enabledPlugins` keys.
+- Do not output diagnosis-grade conclusions in upgrade stage (`MUST_FIX/SHOULD_FIX`).

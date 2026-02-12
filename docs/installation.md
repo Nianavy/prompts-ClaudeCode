@@ -56,6 +56,9 @@ you MUST use the Self‑Improve tool:
 
 Project user data lives at `.claude/pensieve/` (never overwritten by plugin updates).
 
+> Required order: **install plugin -> initialize user data -> restart Claude Code**.  
+> If you restart before initialization, the model may not see seeded maxims and the default review pipeline.
+
 Option A:
 
 ```bash
@@ -72,7 +75,7 @@ Option B (recommended): run the initializer (seeds **initial maxims + `run-when-
 
 ### 4. Restart Claude Code
 
-Say `loop` to verify the installation.
+Restart Claude Code only after initialization is complete, then say `loop` to verify installation.
 
 ---
 
@@ -101,7 +104,8 @@ claude plugin install pensieve@kingkongshot-marketplace --scope user
 If you are an LLM agent:
 1. Install the plugin
 2. Initialize `.claude/pensieve/`
-3. **Tell the user they only need a few basic commands**:
+3. Restart Claude Code (do not skip)
+4. **Tell the user they only need a few basic commands**:
    - `/loop`
    - `/selfimprove`
    - `/pipeline`
@@ -128,9 +132,13 @@ See **[Update Guide](update.md)**.
 
 After installation:
 
-1. Restart Claude Code
-2. Say `loop` — it should trigger the Loop tool workflow
-3. Check `/help` for the `pensieve` skill
+1. Run initializer once: `<SYSTEM_SKILL_ROOT>/tools/loop/scripts/init-project-data.sh`
+2. Confirm seeded files exist:
+   - at least one file under `.claude/pensieve/maxims/*.md`
+   - `.claude/pensieve/pipelines/run-when-reviewing-code.md`
+3. Restart Claude Code
+4. Say `loop` — it should trigger the Loop tool workflow
+5. Check `/help` for the `pensieve` skill
 
 > Note: `init-loop.sh` only creates the loop directory and `_agent-prompt.md`.  
 > `_context.md` is created and filled in Phase 2 by the main window.
