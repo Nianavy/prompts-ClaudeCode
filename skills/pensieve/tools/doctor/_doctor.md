@@ -43,6 +43,8 @@ description: 只读检查工具：基于 README 规范输出 PASS/PASS_WITH_WARN
 
 **结论状态判定**（硬规则）：`MUST_FIX > 0` → `FAIL`（→ `upgrade`）| `MUST_FIX = 0` 且 `SHOULD_FIX + INFO > 0` → `PASS_WITH_WARNINGS`（→ `self-improve`）| 三者均 0 → `PASS`（→ `none`）
 
+**执行原则（简化）**：优先执行 `run-doctor.sh`，并以脚本产出的 summary/report 为唯一判定依据，不做人工二次推断。
+
 ---
 ## Phase 1: 读取规范并生成检查矩阵
 **Goal**: 从规范文件提取所有检查项，生成内部检查矩阵。
@@ -54,6 +56,11 @@ description: 只读检查工具：基于 README 规范输出 PASS/PASS_WITH_WARN
 ## Phase 2: 扫描文件并验证
 **Goal**: 运行共享结构扫描，读取结果纳入判定。
 **Actions**:
+0. 优先使用总控脚本（推荐）：
+```bash
+bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/run-doctor.sh --strict
+```
+> 该脚本会串行执行结构扫描、frontmatter 快检、图谱生成、报告汇总与 SKILL/MEMORY 维护。若使用该脚本，可跳过下方 1~3 的手工拼装步骤。
 1. 运行：
 ```bash
 bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/scan-structure.sh --output .state/pensieve-structure-scan.json
@@ -66,7 +73,7 @@ bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/scan-structure.sh --output .state/
 **Actions**:
 1. 运行：
 ```bash
-bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/check-frontmatter.sh
+bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/check-frontmatter.sh --format text
 ```
 2. 读取 Files scanned、MUST_FIX/SHOULD_FIX 数量与明细
 3. frontmatter 语法错误/缺失/必填字段缺失/值非法 → `MUST_FIX`；pipeline 命名违规（`FM-301/FM-302`）→ `MUST_FIX`；`decision` 定位加速缺失（`FM-401~FM-404`）→ `SHOULD_FIX`

@@ -30,7 +30,7 @@ description: 提交或复盘时自动将可复用结论沉淀到 knowledge/decis
 
 同一洞察可拆分写入多层。`pipeline` 仅表达 HOW（执行顺序与验证闭环），不替代 IS/WANT/MUST。
 
-### Pipeline 门禁
+### Pipeline 新建条件
 - 同类任务在多个会话/loop 中重复出现
 - 执行顺序会显著影响结果（步骤不可随意交换）
 - 每步都有可验证完成标准
@@ -72,7 +72,7 @@ description: 提交或复盘时自动将可复用结论沉淀到 knowledge/decis
 **Actions**:
 1. 读取会话上下文与 `git diff --cached`
 2. 提取核心洞察（可以是多条），判定语义层（IS/WANT/MUST），多层时拆分写入
-3. 判断是否需要 `pipeline`（HOW）：仅当满足门禁时新建
+3. 判断是否需要 `pipeline`（HOW）：仅当满足条件时新建
 4. 路径规则：
    - `maxim`：`.claude/skills/pensieve/maxims/{one-sentence-conclusion}.md`
    - `decision`：`.claude/skills/pensieve/decisions/{date}-{conclusion}.md`

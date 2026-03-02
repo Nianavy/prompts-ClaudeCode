@@ -8,6 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../../loop/scripts/_lib.sh"
 
 ROOT=""
+FORMAT="text"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --root)
@@ -15,14 +16,20 @@ while [[ $# -gt 0 ]]; do
       ROOT="$2"
       shift 2
       ;;
+    --format)
+      [[ $# -ge 2 ]] || { echo "Missing value for --format" >&2; exit 1; }
+      FORMAT="$2"
+      shift 2
+      ;;
     -h|--help)
       cat <<'USAGE'
 Usage:
-  check-frontmatter.sh [--root <path>]
+  check-frontmatter.sh [--root <path>] [--format <text|json>]
 
 Options:
-  --root <path>   Scan root. Default: <project>/.claude/skills/pensieve
-  -h, --help      Show help
+  --root <path>      Scan root. Default: <project>/.claude/skills/pensieve
+  --format <fmt>     Output format: text | json. Default: text
+  -h, --help         Show help
 USAGE
       exit 0
       ;;
@@ -33,6 +40,15 @@ USAGE
   esac
 done
 
+case "$FORMAT" in
+  text|json)
+    ;;
+  *)
+    echo "Unsupported --format: $FORMAT (expected: text|json)" >&2
+    exit 1
+    ;;
+esac
+
 if [[ -z "$ROOT" ]]; then
   ROOT="$(user_data_root)"
 fi
@@ -41,16 +57,18 @@ ROOT="$(to_posix_path "$ROOT")"
 PYTHON_BIN="$(python_bin || true)"
 [[ -n "$PYTHON_BIN" ]] || { echo "Python not found" >&2; exit 1; }
 
-"$PYTHON_BIN" - "$ROOT" <<'PY'
+"$PYTHON_BIN" - "$ROOT" "$FORMAT" <<'PY'
 from __future__ import annotations
 
 import datetime as dt
+import json
 import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 root = Path(sys.argv[1])
+fmt = sys.argv[2]
 
 allowed_types = {"maxim", "decision", "knowledge", "pipeline"}
 allowed_status = {"draft", "active", "archived"}
@@ -324,26 +342,47 @@ for p in files:
 must_fix = [x for x in issues if x.level == "MUST_FIX"]
 should_fix = [x for x in issues if x.level == "SHOULD_FIX"]
 
-print("# Frontmatter 快检报告")
-print()
-print(f"- Root: `{root}`")
-print(f"- Files scanned: {len(files)}")
-print(f"- MUST_FIX: {len(must_fix)}")
-print(f"- SHOULD_FIX: {len(should_fix)}")
-print()
-
-print("## MUST_FIX")
-if not must_fix:
-    print("- (none)")
+if fmt == "json":
+    out = {
+        "root": str(root),
+        "files_scanned": len(files),
+        "summary": {
+            "must_fix_count": len(must_fix),
+            "should_fix_count": len(should_fix),
+            "total_issues": len(issues),
+        },
+        "issues": [
+            {
+                "level": i.level,
+                "code": i.code,
+                "path": i.path,
+                "message": i.message,
+            }
+            for i in issues
+        ],
+    }
+    print(json.dumps(out, ensure_ascii=False, indent=2))
 else:
-    for i in must_fix:
-        print(f"- [{i.code}] `{i.path}`: {i.message}")
-print()
+    print("# Frontmatter 快检报告")
+    print()
+    print(f"- Root: `{root}`")
+    print(f"- Files scanned: {len(files)}")
+    print(f"- MUST_FIX: {len(must_fix)}")
+    print(f"- SHOULD_FIX: {len(should_fix)}")
+    print()
 
-print("## SHOULD_FIX")
-if not should_fix:
-    print("- (none)")
-else:
-    for i in should_fix:
-        print(f"- [{i.code}] `{i.path}`: {i.message}")
+    print("## MUST_FIX")
+    if not must_fix:
+        print("- (none)")
+    else:
+        for i in must_fix:
+            print(f"- [{i.code}] `{i.path}`: {i.message}")
+    print()
+
+    print("## SHOULD_FIX")
+    if not should_fix:
+        print("- (none)")
+    else:
+        for i in should_fix:
+            print(f"- [{i.code}] `{i.path}`: {i.message}")
 PY
