@@ -21,7 +21,7 @@ gate: auto
 
 **上下文链接（至少一条）**：
 - 基于：[[knowledge/taste-review/content]]
-- 相关：[[decisions]]
+- 相关：none
 
 ---
 

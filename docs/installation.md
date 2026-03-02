@@ -43,7 +43,7 @@ claude plugin install pensieve@kingkongshot-marketplace --scope project
 先探索项目，再决定是否使用 Pensieve 工具。
 
 当用户需要结构化工作流时：
-- 先用 Upgrade 工具完成版本更新前置检查（最高优先级）
+- Upgrade 仅用于版本更新/旧数据迁移/残留清理（按需）
 - 使用 Init 工具初始化项目级用户数据，并生成首轮探索与品味基线（新项目首次接入）
 - 使用 Loop 工具进行拆解 + 自动循环执行
 - 使用 Upgrade 工具处理迁移用户数据

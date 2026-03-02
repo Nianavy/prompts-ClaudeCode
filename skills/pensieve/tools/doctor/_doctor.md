@@ -41,7 +41,7 @@ description: 只读检查工具：基于 README 规范输出 PASS/PASS_WITH_WARN
 
 **INFO**：观察项、统计项、或需用户决策的取舍项。
 
-**结论状态判定**（硬规则）：`MUST_FIX > 0` → `FAIL`（→ `upgrade`）| `MUST_FIX = 0` 且 `SHOULD_FIX + INFO > 0` → `PASS_WITH_WARNINGS`（→ `self-improve`）| 三者均 0 → `PASS`（→ `none`）
+**结论状态判定**（硬规则）：`MUST_FIX > 0` → `FAIL`（迁移类问题→`upgrade`；非迁移类问题→`self-improve`）| `MUST_FIX = 0` 且 `SHOULD_FIX + INFO > 0` → `PASS_WITH_WARNINGS`（→ `self-improve`）| 三者均 0 → `PASS`（→ `none`）
 
 **执行原则（简化）**：优先执行 `run-doctor.sh`，并以脚本产出的 summary/report 为唯一判定依据，不做人工二次推断。
 
@@ -66,7 +66,7 @@ bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/run-doctor.sh --strict
 bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/scan-structure.sh --output .state/pensieve-structure-scan.json
 ```
 2. 读取 `status`、`summary.must_fix_count`/`should_fix_count`、`flags.*`、`findings[]`
-3. 若 `must_fix_count > 0`，结论至少 `FAIL`，建议动作优先 `upgrade`
+3. 若 `must_fix_count > 0`，结论至少 `FAIL`；仅迁移类问题建议动作为 `upgrade`
 
 ## Phase 2.2: Frontmatter 快检
 **Goal**: 覆盖 frontmatter 格式验证，纳入判定。
@@ -132,7 +132,7 @@ bash <SYSTEM_SKILL_ROOT>/tools/upgrade/scripts/generate-user-data-graph.sh
 - 发现独立 graph 文件: {yes/no}
 - 缺失关键目录: {yes/no}
 - MEMORY.md 缺失/漂移: {yes/no}
-- 建议动作: {`upgrade` or `none`}
+- 建议动作: {`upgrade` | `self-improve` | `none`}
 
 ## 5) 三步行动计划
 1. {第一步（可执行的具体操作）}

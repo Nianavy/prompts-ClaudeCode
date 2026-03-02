@@ -31,7 +31,7 @@
 | "项目里有旧版 skills/pensieve/，顺手帮我迁移" | 继续 init | `upgrade` |
 | "先给我 PASS/FAIL 检查结论" | init 或 upgrade 给结论 | `doctor` |
 | "初始化后直接把候选写进 knowledge/decision" | init 直接写入 | `self-improve` |
-| "先跑 doctor，再决定要不要 upgrade" | 直接跳过版本确认 | `upgrade`（先做版本检查；无新版本时再询问是否跑 `doctor`） |
+| "先跑 doctor，再决定要不要 upgrade" | 强制改成先 `upgrade` | `doctor`（若报告迁移/旧路径/旧键问题，再执行 `upgrade`） |
 | "边检查边帮我改" | doctor 批量修改用户数据文件 | 先 `doctor` 报告，再手动修（仅保留 `SKILL.md`/auto memory 自动维护） |
 | "先自动把这次会话都沉淀了，不用我确认" | 自动沉淀 | `self-improve`（可直接写入） |
 | "改 1 个文案文件，顺便 loop" | 开 loop | 直接完成 |

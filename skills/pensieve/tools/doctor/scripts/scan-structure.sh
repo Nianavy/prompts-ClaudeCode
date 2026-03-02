@@ -210,6 +210,33 @@ def has_plugin_knowledge_path_reference(text: str) -> bool:
     return bool(plugin_path_re.search(text))
 
 
+def normalize_context_link_line(line: str) -> str:
+    m = re.match(r"^(\s*-\s*(?:基于|导致|相关)：)\s*.*$", line)
+    if not m:
+        return line.rstrip()
+    return f"{m.group(1)} <context-value>"
+
+
+def normalize_critical_file_content(path: Path, text: str) -> str:
+    rel = path.as_posix()
+    if rel.endswith("pipelines/run-when-reviewing-code.md") or rel.endswith("pipelines/run-when-committing.md"):
+        lines = [normalize_context_link_line(line) for line in text.split("\n")]
+        return "\n".join(lines).rstrip() + "\n"
+    return text
+
+
+def has_memory_guidance(block: str) -> bool:
+    for raw_line in block.splitlines():
+        line = raw_line.strip()
+        if line == memory_guidance_line:
+            return True
+        lower = line.lower()
+        if lower.startswith("- guidance:") and "pensieve" in lower and "skill" in lower:
+            if "when a request involves" in lower or "when needs involve" in lower:
+                return True
+    return False
+
+
 def load_json(path: Path) -> tuple[dict | None, str | None]:
     if not path.exists():
         return None, None
@@ -336,14 +363,16 @@ for target, template in critical_files:
             "修复插件安装或更新到完整版本后重试。",
         )
         continue
-    if read_text_normalized(target) != read_text_normalized(template):
+    target_text = normalize_critical_file_content(target, read_text_normalized(target))
+    template_text = normalize_critical_file_content(template, read_text_normalized(template))
+    if target_text != template_text:
         add_finding(
             "STR-202",
             "MUST_FIX",
             "critical_file_drift",
             target,
-            "关键文件内容与模板不一致。",
-            "执行 upgrade 先备份再替换，恢复关键流程文件与模板一致。",
+            "关键文件主体内容与模板不一致（上下文链接值差异已忽略）。",
+            "执行 upgrade 先备份再替换，恢复关键流程文件主体与模板一致。",
         )
 
 review_pipeline = root / "pipelines" / "run-when-reviewing-code.md"
@@ -431,7 +460,7 @@ else:
     else:
         memory_text = read_text_normalized(memory_file)
         memory_block = extract_pensieve_memory_block(memory_text)
-        if system_skill_description not in memory_block or memory_guidance_line not in memory_block:
+        if system_skill_description not in memory_block or not has_memory_guidance(memory_block):
             add_finding(
                 "STR-502",
                 "MUST_FIX",

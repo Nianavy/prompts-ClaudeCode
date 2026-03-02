@@ -67,7 +67,7 @@ bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/run-doctor.sh --strict
 - 升级完成后，由用户手动运行 Doctor 做体检
 
 然后：
-- 优先先执行 Upgrade（不要把 Doctor 当成升级前必须步骤）
+- 仅在需要版本迁移/残留清理时执行 Upgrade（不要把 Upgrade 当成体检步骤）
 - 升级完成后手动执行一次 Doctor
 - 如果 doctor 报告迁移/结构问题，再按报告继续处理
 - 如果 doctor 通过，按需执行 Self-Improve 沉淀经验

@@ -13,7 +13,7 @@ Doctor / Upgrade 共用的结构历史、目标结构与处理规则（单一事
 - `pipelines/`
 - `loop/`
 
-关键文件（初始化后应存在，且 Upgrade 需对齐内容）：
+关键文件（初始化后应存在，且 Upgrade 需对齐主体内容）：
 - `pipelines/run-when-reviewing-code.md`
 - `pipelines/run-when-committing.md`
 - `knowledge/taste-review/content.md`
@@ -44,20 +44,20 @@ Doctor / Upgrade 共用的结构历史、目标结构与处理规则（单一事
 1. 发现 deprecated 路径与 active 路径并行存在（双源）。
 2. active 路径缺失最小目录结构。
 3. active 路径缺失关键种子文件。
-4. 关键文件内容与模板不一致。
+4. 关键文件主体内容与模板不一致（`pipeline` 的“基于/导致/相关”行仅校验键，不校验值）。
 5. 发现独立 graph 文件（`_pensieve-graph*.md` / `pensieve-graph*.md` / `graph*.md`）。
 6. 发现项目级子目录历史规范 README 副本（`{maxims,decisions,knowledge,pipelines,loop}/{README*.md,readme*.md}`）。
 
 判为"结构层 no-op"的条件：
 1. 仅存在 active 路径。
 2. 最小目录结构齐全。
-3. 关键种子文件齐全且内容与模板一致。
+3. 关键种子文件齐全且主体内容与模板一致（`pipeline` 的“基于/导致/相关”行值可按项目实际维护）。
 4. 不存在 deprecated 路径与独立 graph 文件。
 5. 不存在项目级子目录历史规范 README 副本。
 
 ## 关键文件内容对齐策略
 
-当关键文件缺失或内容不一致时，Upgrade 必须执行完整对齐：
+当关键文件缺失或主体内容不一致时，Upgrade 必须执行完整对齐：
 1. 若目标文件存在，先备份为 `*.bak.<timestamp>`。
 2. 使用模板文件覆盖目标文件。
 3. 在迁移报告中列出被替换文件与备份路径。

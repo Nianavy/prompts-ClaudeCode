@@ -2,16 +2,15 @@
 
 所有工具的跨领域硬规则。各 tool file 引用此处，不再内联。
 
-## 版本更新优先（Hard Rule）
+## 版本相关路由（Hard Rule）
 
-版本更新前置检查统一由 `upgrade` 负责，且是最高优先级前置条件。
+`upgrade` 只负责版本与迁移动作，不负责项目体检结论。
 
-- 涉及"更新版本/插件异常/版本不确定/兼容问题"时，优先路由 `upgrade` 先做版本确认。
-- 执行 `init` 或 `doctor` 前，若版本状态不明，先完成 `upgrade` 版本检查。
+- 涉及"更新版本/迁移旧数据/清理旧残留/插件兼容问题"时，路由 `upgrade`。
+- `init` / `doctor` / `self-improve` / `loop` 不要求前置执行 `upgrade`。
+- 项目体检（PASS/FAIL、MUST_FIX/SHOULD_FIX）统一由 `doctor` 输出。
 - `init` 完成后，必须执行一次 `doctor`。
-- `upgrade` 发现已是最新时，不进入迁移；仅询问用户是否继续运行 `doctor` 自检。
-- 默认流程：`upgrade`（版本检查）→（可选）`doctor` → `self-improve`。
-- `doctor` 不是 `upgrade` 的前置条件。
+- 推荐顺序（按需）：`upgrade`（仅版本/迁移）→ `doctor`（体检）→ `self-improve`（沉淀）。
 
 ## 确认再执行（Hard Rule）
 

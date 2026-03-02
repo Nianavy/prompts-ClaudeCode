@@ -21,8 +21,8 @@ gate: auto
 
 **上下文链接（至少一条）**：
 - 基于：[[knowledge/taste-review/content]]
-- 导致：[[decisions/2026-xx-xx-review-policy]]
-- 相关：[[decisions/2026-xx-xx-review-strategy]]
+- 导致：none
+- 相关：none
 
 ---
 
