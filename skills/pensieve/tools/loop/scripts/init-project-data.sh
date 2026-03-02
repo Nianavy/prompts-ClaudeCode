@@ -26,7 +26,7 @@ PROJECT_ROOT="$(project_root)"
 DATA_ROOT="$(user_data_root)"
 
 PLUGIN_ROOT="$(plugin_root_from_script "$SCRIPT_DIR")"
-TEMPLATES_ROOT="$PLUGIN_ROOT/skills/pensieve/tools/upgrade/templates"
+TEMPLATES_ROOT="$PLUGIN_ROOT/skills/pensieve/tools/migrate/templates"
 SYSTEM_KNOWLEDGE_ROOT="$PLUGIN_ROOT/skills/pensieve/knowledge"
 PROJECT_SKILL_SCRIPT="$PLUGIN_ROOT/skills/pensieve/tools/project-skill/scripts/maintain-project-skill.sh"
 

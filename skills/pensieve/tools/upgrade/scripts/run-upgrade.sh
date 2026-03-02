@@ -24,12 +24,6 @@ Options:
   --skip-version-check      Skip marketplace/plugin update commands
   --dry-run                 Print and record actions without changing files
 
-Compatibility options (accepted but ignored):
-  --root <path>             Deprecated. Upgrade no longer mutates user data.
-  --backup-dir <path>       Deprecated. Upgrade no longer mutates user data.
-  --skip-doctor             Deprecated. Upgrade no longer runs doctor automatically.
-  --doctor-strict           Deprecated. Upgrade no longer runs doctor automatically.
-
   -h, --help                Show help
 USAGE
 }
@@ -40,12 +34,6 @@ SUMMARY_JSON=""
 PLUGIN_SCOPE="user"
 SKIP_VERSION_CHECK=0
 DRY_RUN=0
-
-# Deprecated compatibility flags.
-ROOT=""
-BACKUP_DIR=""
-SKIP_DOCTOR=0
-DOCTOR_STRICT=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -77,24 +65,6 @@ while [[ $# -gt 0 ]]; do
       DRY_RUN=1
       shift
       ;;
-    --root)
-      [[ $# -ge 2 ]] || { echo "Missing value for --root" >&2; exit 1; }
-      ROOT="$2"
-      shift 2
-      ;;
-    --backup-dir)
-      [[ $# -ge 2 ]] || { echo "Missing value for --backup-dir" >&2; exit 1; }
-      BACKUP_DIR="$2"
-      shift 2
-      ;;
-    --skip-doctor)
-      SKIP_DOCTOR=1
-      shift
-      ;;
-    --doctor-strict)
-      DOCTOR_STRICT=1
-      shift
-      ;;
     -h|--help)
       usage
       exit 0
@@ -115,10 +85,6 @@ case "$PLUGIN_SCOPE" in
     exit 1
     ;;
 esac
-
-if [[ -n "$ROOT" || -n "$BACKUP_DIR" || "$SKIP_DOCTOR" -eq 1 || "$DOCTOR_STRICT" -eq 1 ]]; then
-  echo "[upgrade] notice: --root/--backup-dir/--skip-doctor/--doctor-strict are deprecated and ignored." >&2
-fi
 
 PROJECT_ROOT="$(to_posix_path "$(project_root)")"
 if [[ -z "$STATE_DIR" ]]; then

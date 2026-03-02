@@ -19,8 +19,8 @@ Doctor / Migrate 共用的结构历史、目标结构与处理规则（单一事
 - `knowledge/taste-review/content.md`
 
 关键文件内容来源（单一事实源）：
-- `<SYSTEM_SKILL_ROOT>/tools/upgrade/templates/pipeline.run-when-reviewing-code.md`
-- `<SYSTEM_SKILL_ROOT>/tools/upgrade/templates/pipeline.run-when-committing.md`
+- `<SYSTEM_SKILL_ROOT>/tools/migrate/templates/pipeline.run-when-reviewing-code.md`
+- `<SYSTEM_SKILL_ROOT>/tools/migrate/templates/pipeline.run-when-committing.md`
 - `<SYSTEM_SKILL_ROOT>/knowledge/taste-review/content.md`
 
 自动维护文件（允许工具更新）：

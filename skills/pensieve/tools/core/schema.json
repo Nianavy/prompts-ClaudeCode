@@ -4,12 +4,12 @@
   "critical_files": [
     {
       "target": "pipelines/run-when-reviewing-code.md",
-      "template": "tools/upgrade/templates/pipeline.run-when-reviewing-code.md",
+      "template": "tools/migrate/templates/pipeline.run-when-reviewing-code.md",
       "compare_mode": "pipeline_context_links_ignored"
     },
     {
       "target": "pipelines/run-when-committing.md",
-      "template": "tools/upgrade/templates/pipeline.run-when-committing.md",
+      "template": "tools/migrate/templates/pipeline.run-when-committing.md",
       "compare_mode": "pipeline_context_links_ignored"
     },
     {

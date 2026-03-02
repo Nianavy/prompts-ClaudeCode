@@ -91,7 +91,7 @@ mkdir -p .claude/skills/pensieve/{maxims,decisions,knowledge,pipelines,loop}
 - 合并项目级 maxims
 - 对齐关键模块与文件位置（含 `run-when-*.md`、`knowledge/taste-review/content.md`）
 - 关键文件内容不一致时执行替换（先备份）
-- 移除历史系统副本与旧目录（README 与 `_*.md` 以及 deprecated 路径）
+- 移除历史系统副本与 deprecated 路径，并清理历史规范副本（`README*.md` / `readme*.md`）与独立 graph 残留
 
 ---
 
