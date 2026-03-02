@@ -2,16 +2,15 @@
 
 Cross-cutting hard rules for all tools. Each tool file references this document instead of inlining these rules.
 
-## Version Update Priority (Hard Rule)
+## Version Routing (Hard Rule)
 
-Version update pre-check is owned by `upgrade` and serves as the highest-priority prerequisite.
+`upgrade` is only responsible for version and migration actions, not for project health-check conclusions.
 
-- When "update version / plugin issue / version uncertainty / compatibility problem" is mentioned, route to `upgrade` for version confirmation first.
-- Before running `init` or `doctor`, if version status is unknown, complete `upgrade` version check first.
+- When "update version / migrate legacy data / clean up old residue / plugin compatibility issue" is mentioned, route to `upgrade`.
+- `init` / `doctor` / `self-improve` / `loop` do not require running `upgrade` first.
+- Project health checks (PASS/FAIL, MUST_FIX/SHOULD_FIX) are exclusively output by `doctor`.
 - After `init` completes, a `doctor` run is mandatory.
-- When `upgrade` finds the version is already current, it does not enter migration; it only asks the user whether to continue with a `doctor` self-check.
-- Default flow: `upgrade` (version check) → (optional) `doctor` → `self-improve`.
-- `doctor` is not a prerequisite for `upgrade`.
+- Recommended order (on demand): `upgrade` (version/migration only) → `doctor` (health check) → `self-improve` (capture).
 
 ## Confirm Before Executing (Hard Rule)
 

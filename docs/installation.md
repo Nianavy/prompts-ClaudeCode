@@ -43,7 +43,7 @@ Add this to the project root (`CLAUDE.md` only):
 Explore the project first, then decide whether to use Pensieve tools.
 
 When the user needs a structured workflow:
-- Run the Upgrade tool first for version update pre-check (highest priority)
+- Upgrade is only for version updates / legacy data migration / residue cleanup (on demand)
 - Use the Init tool to initialize project-level user data and generate an initial exploration + taste baseline (first-time setup)
 - Use the Loop tool for split + auto-loop execution
 - Use the Upgrade tool to migrate user data

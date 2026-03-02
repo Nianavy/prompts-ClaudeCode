@@ -210,6 +210,35 @@ def has_plugin_knowledge_path_reference(text: str) -> bool:
     return bool(plugin_path_re.search(text))
 
 
+def normalize_context_link_line(line: str) -> str:
+    m = re.match(r"^(\s*-\s*(?:Based on|Leads to|Related)：)\s*.*$", line)
+    if not m:
+        m = re.match(r"^(\s*-\s*(?:基于|导致|相关)：)\s*.*$", line)
+    if not m:
+        return line.rstrip()
+    return f"{m.group(1)} <context-value>"
+
+
+def normalize_critical_file_content(path: Path, text: str) -> str:
+    rel = path.as_posix()
+    if rel.endswith("pipelines/run-when-reviewing-code.md") or rel.endswith("pipelines/run-when-committing.md"):
+        lines = [normalize_context_link_line(line) for line in text.split("\n")]
+        return "\n".join(lines).rstrip() + "\n"
+    return text
+
+
+def has_memory_guidance(block: str) -> bool:
+    for raw_line in block.splitlines():
+        line = raw_line.strip()
+        if line == memory_guidance_line:
+            return True
+        lower = line.lower()
+        if lower.startswith("- guidance:") and "pensieve" in lower and "skill" in lower:
+            if "when a request involves" in lower or "when needs involve" in lower:
+                return True
+    return False
+
+
 def load_json(path: Path) -> tuple[dict | None, str | None]:
     if not path.exists():
         return None, None
@@ -342,14 +371,16 @@ for target, template in critical_files:
             "Repair plugin installation or update to a complete version, then retry.",
         )
         continue
-    if read_text_normalized(target) != read_text_normalized(template):
+    target_text = normalize_critical_file_content(target, read_text_normalized(target))
+    template_text = normalize_critical_file_content(template, read_text_normalized(template))
+    if target_text != template_text:
         add_finding(
             "STR-202",
             "MUST_FIX",
             "critical_file_drift",
             target,
-            "Critical file content does not match the template.",
-            "Run upgrade to back up and replace, restoring critical workflow files to match the template.",
+            "Critical file primary content does not match the template (context link value differences ignored).",
+            "Run upgrade to back up and replace, restoring critical workflow files' primary content to match the template.",
         )
 
 # --- Check: review pipeline referencing plugin-internal knowledge path ---
@@ -440,7 +471,7 @@ else:
     else:
         memory_text = read_text_normalized(memory_file)
         memory_block = extract_pensieve_memory_block(memory_text)
-        if system_skill_description not in memory_block or memory_guidance_line not in memory_block:
+        if system_skill_description not in memory_block or not has_memory_guidance(memory_block):
             add_finding(
                 "STR-502",
                 "MUST_FIX",

@@ -21,8 +21,8 @@ This pipeline only handles task orchestration. Review standards and deeper ratio
 
 **Context links (at least one)**:
 - Based on: [[knowledge/taste-review/content]]
-- Leads to: [[decisions/2026-xx-xx-review-policy]]
-- Related: [[decisions/2026-xx-xx-review-strategy]]
+- Leads to: none
+- Related: none
 
 ---
 

@@ -232,7 +232,7 @@ for item in scan.get("findings", []):
             path=str(item.get("path", "")),
             rule_source="tools/doctor/migrations/README.md",
             message=str(item.get("message", "")),
-            recommendation=str(item.get("recommended_action", "执行 upgrade 或修复结构后重试")),
+            recommendation=str(item.get("recommended_action", "Fix per recommendation then rerun doctor")),
         )
     )
 
@@ -271,9 +271,23 @@ must_fix = [f for f in findings if f.severity == "MUST_FIX"]
 should_fix = [f for f in findings if f.severity == "SHOULD_FIX"]
 info = [f for f in findings if f.severity == "INFO"]
 
+migration_must_fix_categories = {
+    "missing_root",
+    "missing_directory",
+    "deprecated_path",
+    "legacy_graph_file",
+    "legacy_spec_readme_copy",
+    "missing_critical_file",
+    "critical_file_drift",
+    "review_pipeline_path_drift",
+    "legacy_enabled_plugins_key",
+    "missing_enabled_plugins_key",
+}
+has_migration_must_fix = any(f.category in migration_must_fix_categories for f in must_fix)
+
 if must_fix:
     status = "FAIL"
-    next_step = "upgrade"
+    next_step = "upgrade" if has_migration_must_fix else "self-improve"
 elif should_fix or info:
     status = "PASS_WITH_WARNINGS"
     next_step = "self-improve"
@@ -346,13 +360,17 @@ lines.append(f"- 缺失关键目录: {yes_no(flags.get('has_missing_directories'
 lines.append(
     f"- MEMORY.md 缺失/漂移: {yes_no(flags.get('has_missing_memory_file') or flags.get('has_memory_content_drift'))}"
 )
-lines.append(f"- 建议动作: `{next_step if next_step == 'upgrade' else 'none'}`")
+lines.append(f"- 建议动作: `{next_step if next_step in {'upgrade', 'self-improve'} else 'none'}`")
 lines.append("")
 lines.append("## 5) 三步行动计划")
-if must_fix:
+if must_fix and has_migration_must_fix:
     lines.append("1. 先运行 `upgrade` 脚本完成迁移、配置清理和关键文件对齐。")
     lines.append("2. 再运行一次 `doctor`，确认 MUST_FIX 清零。")
     lines.append("3. 若仍有 SHOULD_FIX/INFO，再按优先级逐项修复。")
+elif must_fix:
+    lines.append("1. 先按报告逐项修复 MUST_FIX（frontmatter/断链/MEMORY 等内容问题），无需先执行 `upgrade`。")
+    lines.append("2. 修复后重跑 `doctor`，确认 MUST_FIX 清零。")
+    lines.append("3. 若后续出现迁移类问题（旧路径/关键文件漂移/插件键），再执行 `upgrade`。")
 elif should_fix or info:
     lines.append("1. 先处理 SHOULD_FIX 项，保证规范可长期维护。")
     lines.append("2. 修复后重跑 `doctor`，确认状态变为 PASS。")

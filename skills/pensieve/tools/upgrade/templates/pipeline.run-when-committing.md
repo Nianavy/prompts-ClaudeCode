@@ -21,7 +21,7 @@ Automatically extract insights from session context + diff before committing, ca
 
 **Context links (at least one)**:
 - Based on: [[knowledge/taste-review/content]]
-- Related: [[decisions]]
+- Related: none
 
 ---
 

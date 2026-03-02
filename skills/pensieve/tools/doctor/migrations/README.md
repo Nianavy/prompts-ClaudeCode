@@ -13,7 +13,7 @@ Minimum directory structure:
 - `pipelines/`
 - `loop/`
 
-Critical files (should exist after initialization; Upgrade must align content):
+Critical files (should exist after initialization; Upgrade must align primary content):
 - `pipelines/run-when-reviewing-code.md`
 - `pipelines/run-when-committing.md`
 - `knowledge/taste-review/content.md`
@@ -44,20 +44,20 @@ Conditions that indicate a "structure migration issue":
 1. A deprecated path co-exists with the active path (dual sources).
 2. The active path is missing the minimum directory structure.
 3. The active path is missing critical seed files.
-4. Critical file content does not match the template.
+4. Critical file primary content does not match the template (`pipeline` context link lines only check keys, not values).
 5. Standalone graph files found (`_pensieve-graph*.md` / `pensieve-graph*.md` / `graph*.md`).
 6. Legacy spec README copies found in project-level subdirectories (`{maxims,decisions,knowledge,pipelines,loop}/{README*.md,readme*.md}`).
 
 Conditions that indicate "structure no-op":
 1. Only the active path exists.
 2. Minimum directory structure is complete.
-3. Critical seed files are present and content matches templates.
+3. Critical seed files are present and primary content matches templates (`pipeline` context link values may be maintained per project).
 4. No deprecated paths or standalone graph files exist.
 5. No legacy spec README copies in project-level subdirectories.
 
 ## Critical File Content Alignment Strategy
 
-When critical files are missing or content is inconsistent, Upgrade must perform full alignment:
+When critical files are missing or primary content is inconsistent, Upgrade must perform full alignment:
 1. If the target file exists, back it up as `*.bak.<timestamp>`.
 2. Overwrite the target file using the template file.
 3. List replaced files and backup paths in the migration report.

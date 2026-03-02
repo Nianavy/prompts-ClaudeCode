@@ -67,7 +67,7 @@ bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/run-doctor.sh --strict
 - After upgrade completes, the user manually runs Doctor for health check
 
 Then:
-- Prefer running Upgrade first (do not treat Doctor as a pre-upgrade prerequisite)
+- Only run Upgrade when version migration / residue cleanup is needed (do not treat Upgrade as a health-check step)
 - Manually run Doctor once after upgrade completes
 - If Doctor reports migration/structure issues, continue fixing per the report
 - If Doctor passes, run Self-Improve as needed

@@ -41,7 +41,7 @@ Check scope: project-level user data (latest per `migrations/README.md`) and leg
 
 **INFO**: observations, statistics, or tradeoff items requiring user decision.
 
-**Status determination** (hard rule): `MUST_FIX > 0` -> `FAIL` (-> `upgrade`) | `MUST_FIX = 0` and `SHOULD_FIX + INFO > 0` -> `PASS_WITH_WARNINGS` (-> `self-improve`) | all zero -> `PASS` (-> `none`)
+**Status determination** (hard rule): `MUST_FIX > 0` -> `FAIL` (migration issues -> `upgrade`; non-migration issues -> `self-improve`) | `MUST_FIX = 0` and `SHOULD_FIX + INFO > 0` -> `PASS_WITH_WARNINGS` (-> `self-improve`) | all zero -> `PASS` (-> `none`)
 
 **Execution principle (simplified)**: Prefer running `run-doctor.sh` and use its summary/report as the sole basis for judgment; do not add manual inference.
 
@@ -66,7 +66,7 @@ bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/run-doctor.sh --strict
 bash <SYSTEM_SKILL_ROOT>/tools/doctor/scripts/scan-structure.sh --output .state/pensieve-structure-scan.json
 ```
 2. Read `status`, `summary.must_fix_count`/`should_fix_count`, `flags.*`, `findings[]`
-3. If `must_fix_count > 0`, conclusion is at least `FAIL`, recommended action prioritizes `upgrade`
+3. If `must_fix_count > 0`, conclusion is at least `FAIL`; recommended action is `upgrade` only for migration-type issues
 
 ## Phase 2.2: Frontmatter quick check
 **Goal**: Cover frontmatter format validation and incorporate into judgment.
@@ -132,7 +132,7 @@ Fix: {one-line fix suggestion}
 - Standalone graph files found: {yes/no}
 - Missing critical directories: {yes/no}
 - MEMORY.md missing/drifted: {yes/no}
-- Suggested action: {`upgrade` or `none`}
+- Suggested action: {`upgrade` | `self-improve` | `none`}
 
 ## 5) Three-Step Action Plan
 1. {step 1 (specific, actionable)}
@@ -152,7 +152,7 @@ Fix: {one-line fix suggestion}
 |---|---|---|---|
 ```
 
-2. When `FAIL` and migration-related, `next step` prioritizes `upgrade`; `decision`/`pipeline` broken links are at least `MUST_FIX`
+2. When `FAIL` and migration-related, `next step` is `upgrade`; when `FAIL` and non-migration, `next step` is `self-improve`; `decision`/`pipeline` broken links are at least `MUST_FIX`
 3. Doctor does not modify user data files; only allowed to auto-maintain `SKILL.md` and auto memory
 
 ## Phase 3.5: Maintain project-level SKILL + MEMORY

@@ -31,7 +31,7 @@ Each tool has a clear responsibility boundary. When a request is routed to the w
 | "There's an old skills/pensieve/ in the project, migrate it for me" | Continue with init | `upgrade` |
 | "Give me a PASS/FAIL check result first" | Let init or upgrade produce conclusions | `doctor` |
 | "After init, write the candidates directly into knowledge/decision" | Let init write directly | `self-improve` |
-| "Run doctor first, then decide whether to upgrade" | Skip version confirmation | `upgrade` (do version check first; if no new version, then ask whether to run `doctor`) |
+| "Run doctor first, then decide whether to upgrade" | Force running `upgrade` first | `doctor` (if the report flags migration / old paths / old keys, then run `upgrade`) |
 | "Check and fix issues at the same time" | Let doctor batch-modify user data files | Run `doctor` for the report first, then fix manually (only `SKILL.md`/auto memory auto-maintenance is allowed) |
 | "Just archive everything from this session automatically, no need to confirm" | Auto-archive without routing | `self-improve` (may write directly) |
 | "Fix 1 copy file, and also run loop" | Open a loop | Complete directly |
