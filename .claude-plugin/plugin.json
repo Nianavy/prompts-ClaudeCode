@@ -1,7 +1,7 @@
 {
   "name": "pensieve",
   "version": "0.6.1",
-  "description": "Pensieve — humans store experience, AI reads the truth",
+  "description": "Pensieve plugin shell with embedded skill and Claude hooks",
   "author": {
     "name": "kingkongshot"
   },
@@ -12,6 +12,7 @@
     "automation",
     "experience",
     "decisions",
-    "maxims"
+    "maxims",
+    "skills"
   ]
 }
