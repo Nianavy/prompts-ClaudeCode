@@ -2,7 +2,7 @@
 
 # Pensieve
 
-**Project-level structured memory for Claude Code.**
+**A continuously growing project memory for AI agents.**
 
 [![GitHub Stars](https://img.shields.io/github/stars/kingkongshot/Pensieve?color=ffcb47&labelColor=black&style=flat-square)](https://github.com/kingkongshot/Pensieve/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-white?labelColor=black&style=flat-square)](LICENSE)
@@ -11,167 +11,154 @@
 
 </div>
 
-## The Problem
-
-Claude Code starts every conversation from scratch.
-
-It doesn't remember your project conventions, doesn't know why you chose approach A last time, and won't learn from past failures. You'll fall into the same traps over and over again.
-
-Pensieve gives Claude Code structured memory. Every review, every commit, every complex task automatically accumulates project knowledge. **The longer you use it, the better it understands your project.**
-
 ## Without Pensieve vs With Pensieve
 
 | Without | With |
 |---|---|
 | Re-explain project conventions every time | Conventions stored as maxims, loaded automatically |
-| Complex tasks spiral out of control halfway through | Loop auto-decomposes, isolates execution, verifies each step |
-| Code review standards depend on your mood that day | Review standards hardened into executable pipelines |
-| Same mistake from last week happens again this week | Lessons learned auto-distilled, skipped next time |
-| Forget why a technical decision was made three months later | Decision records include context and mitigation checklists |
+| Code review standards depend on mood | Review standards codified as executable pipelines |
+| Repeat last week's mistakes this week | Lessons learned are captured automatically, skipped next time |
+| Forget the reasoning behind a design three months later | Decisions record context and alternatives |
+| Re-read docs to locate module boundaries every time | Knowledge caches exploration results for direct reuse |
 
-## What Happens After You Start
+## Upgrading from older versions (< 1.0)
 
-**Day 1** — Install → Initialize → Auto-scan project hotspot modules → Output code-taste baseline report
+1.0 restructured the installation architecture. If your current version is below 1.0, **do not use `git pull`** — you need a full uninstall and reinstall.
 
-**Week 1** — Use `loop` to tackle complex dev tasks. Claude decomposes work according to your maxims, sub-agents execute in isolation, and lessons are auto-distilled at wrap-up.
+How to tell: if you installed Pensieve via `claude plugin install`, or you cannot find `.claude/skills/pensieve/.src/manifest.json`, you are on an older version.
 
-**Month 1** — Your project has accumulated its own conventions, technical decision records, review workflows, and reference knowledge. Every commit and review silently enriches this knowledge base.
-
-**After that** — Claude understands your project better and better. When new team members join, Pensieve serves as a living project handbook.
-
-## 30-Second Start
+User data (`maxims/`, `decisions/`, `knowledge/`, `pipelines/`) will be preserved; everything else will be cleaned up:
 
 ```bash
-# 1. Add the marketplace source
-claude plugin marketplace add kingkongshot/Pensieve#main
+# 1. Uninstall Claude plugin and cache
+claude plugin uninstall pensieve 2>/dev/null
+rm -rf ~/.claude/plugins/cache/kingkongshot-marketplace/pensieve
 
-# 2. Install
-claude plugin install pensieve@kingkongshot-marketplace --scope user
+# 2. Clean skill directory (keep user data only)
+cd .claude/skills/pensieve
+rm -rf .src agents .git .gitignore SKILL.md LICENSE README.md .state .backup .obsidian temp resource
 
-# 3. Restart Claude Code, then say:
+# 3. Clean other possible legacy skill paths
+rm -rf .agents/skills/pensieve
+
+# 4. Reinstall
+cd ../../..
+git clone -b main https://github.com/kingkongshot/Pensieve.git /tmp/pensieve-new
+cp -r /tmp/pensieve-new/{.git,.gitignore,.src,agents,LICENSE,README.md} .claude/skills/pensieve/
+rm -rf /tmp/pensieve-new
+
+# 5. Initialize + health check
+bash .claude/skills/pensieve/.src/scripts/init-project-data.sh
+bash .claude/skills/pensieve/.src/scripts/run-doctor.sh --strict
 ```
 
-> Initialize pensieve for me
+## Installation
 
-That's it. Then say **"use loop to finish this task"** to kick off your first task.
+Prerequisites: `git`, `bash`, `Python 3.8+`.
 
-[Installation Guide](docs/installation.md) · [Update Guide](docs/update.md) · [Uninstall](docs/installation.md#uninstall)
+```bash
+# 1. Install skill
+git clone -b main https://github.com/kingkongshot/Pensieve.git .claude/skills/pensieve
 
-## Six Built-in Tools
+# 2. Initialize (create user data directories, seed default content, generate SKILL.md router file)
+bash .claude/skills/pensieve/.src/scripts/init-project-data.sh
 
-Ready to use after install, no extra configuration needed. Just describe what you want in plain language.
+# 3. Install Claude hooks (required for Claude Code users, skip for other clients)
+claude plugin marketplace add kingkongshot/Pensieve#claude-plugin
+claude plugin install pensieve@kingkongshot-marketplace --scope project
+```
 
-### `init` — Initialize a Project
+The skill and hooks have different update mechanisms — the skill uses `git pull`, hooks use `claude plugin update` — so they live on two separate branches, each upgrading independently without affecting the other.
 
-Scans your git history, identifies hotspot modules, and runs a code-taste baseline analysis. Creates the project-level knowledge directory (maxims / decisions / knowledge / pipelines) and seeds default review and commit pipelines. **Analyze-only, no writes** — you decide which findings are worth keeping.
-Must run `doctor` once after completion for structure and format verification.
+## Updating
 
-> "Initialize pensieve for me"
+```bash
+cd .claude/skills/pensieve
+git pull --ff-only
+bash .src/scripts/run-doctor.sh --strict
+```
 
-### `loop` — Decompose and Execute Complex Tasks
+`git pull` only updates system files (`.src/`, `agents/`). User data is protected by `.gitignore` and will not be overwritten. **Do not delete user data directories before updating** — they are your accumulated project memory, and once deleted they are gone.
 
-Breaks a large requirement into sub-tasks, confirms scope before starting. The main window orchestrates while sub-agents execute each task in isolation, keeping contexts clean. At wrap-up, automatically asks whether to distill lessons learned. Small tasks skip loop and run directly.
-
-> "Use loop to finish this task"
-
-### `self-improve` — Distill Lessons Learned
-
-Extracts insights from conversations, diffs, and loop executions. Classifies them as maxim (hard rule), decision (technical decision), knowledge (reference fact), or pipeline (executable workflow), writes to the corresponding location, and updates the knowledge graph. Also auto-triggers on commit.
-
-> "Distill lessons from this session"
-
-### `doctor` — Health Check
-
-Read-only scan of all user data: frontmatter format, semantic link integrity, directory structure compliance. Outputs a fixed-format PASS / PASS_WITH_WARNINGS / FAIL report with a three-step action plan. Does not modify user data files by default; only auto-maintains the `SKILL.md` and Claude auto memory (`~/.claude/projects/<project>/memory/MEMORY.md`) Pensieve guidance blocks.
-
-> "Check if there are any data issues"
-
-### `upgrade` — Version Upgrade
-
-Only performs version-level actions: version comparison, pull latest, plugin key alignment and old plugin name cleanup. Does not perform directory migration or content repair. After upgrade completes, guides you to manually run doctor for verification.
-
-> "Upgrade pensieve"
-
-### `migrate` — Structure Migration and Residue Cleanup
-
-Only performs user data structure actions: old directory migration, key seed file alignment, old graph/README residue cleanup. Does not update plugin versions, does not output PASS/FAIL. After completion, guides you to manually run doctor for verification.
-
-> "Migrate pensieve legacy data"
-
-## Four-Layer Knowledge Model
-
-Pensieve organizes project knowledge into four layers, each solving a different problem:
-
-| Layer | Type | Answers What | Example |
-|---|---|---|---|
-| **MUST** | maxim | What must never be violated? | "State changes must be atomic" |
-| **WANT** | decision | Why was this approach chosen? | "Chose JWT over sessions because..." |
-| **HOW** | pipeline | How to execute this workflow? | "During review, check in this order" |
-| **IS** | knowledge | What are the facts? | "This module's concurrency model is..." |
-
-Layers are linked via `[[based-on]]` `[[leads-to]]` `[[related]]` semantic links, forming a knowledge graph.
+For complete installation, update, reinstall, and uninstall instructions, see [skill-lifecycle.md](.src/references/skill-lifecycle.md).
 
 ## Self-Reinforcing Loop
 
-This is Pensieve's core mechanism — you don't manually maintain the knowledge base; **your daily development workflow feeds it automatically**:
+You don't need to maintain the knowledge base manually — everyday development feeds it automatically:
 
 ```
-    develop (loop) ──→ commit ──→ review (pipeline)
-         ↑                            │
-         │    ← auto-distill lessons ←│
-         │                            ↓
-         └── maxim / decision / knowledge / pipeline
+    Develop --> Commit --> Review (pipeline)
+     ^                      |
+     |   <-- auto-capture <-|
+     |                      v
+     +-- maxim / decision / knowledge / pipeline
 ```
 
-- **On commit**: PostToolUse hook auto-triggers lesson extraction
-- **On review**: Executes per project pipeline, conclusions flow back as knowledge
-- **On loop wrap-up**: Proactively asks whether to distill lessons from this round
+- **On commit**: PostToolUse hook automatically triggers experience extraction
+- **On review**: Executes per-project pipeline, conclusions flow back as knowledge
+- **On retrospective**: Actively request capture, insights are written to the appropriate layer
 
-You just write code. The knowledge base grows on its own.
+You just write code — the knowledge base grows on its own.
+
+## Four-Layer Knowledge Model
+
+| Layer | Type | What it answers | Cross-project? |
+|---|---|---|---|
+| **MUST** | maxim | What must never be violated? | Yes — holds across projects and languages |
+| **WANT** | decision | Why was this approach chosen? | No — deliberate trade-offs for the current project |
+| **HOW** | pipeline | How should this process run? | Depends |
+| **IS** | knowledge | What are the current facts? | No — verifiable system facts |
+
+Layers are connected through three types of semantic links: `based-on / leads-to / related`.
+
+For detailed specifications, see [maxims.md](.src/references/maxims.md), [decisions.md](.src/references/decisions.md), [knowledge.md](.src/references/knowledge.md), and [pipelines.md](.src/references/pipelines.md) under `.src/references/`.
+
+## Five Tools
+
+| Tool | What it does | Trigger example |
+|---|---|---|
+| `init` | Create data directories, seed default content | "Initialize pensieve for me" |
+| `upgrade` | Refresh skill source code | "Upgrade pensieve" |
+| `migrate` | Clean legacy paths, align seed files | "Clean up old structure" |
+| `doctor` | Read-only scan, check structure and formatting | "Check if my data has any issues" |
+| `self-improve` | Extract insights from conversations and diffs, write to four-layer knowledge | "Capture what we learned this time" |
+
+For tool boundaries and redirect rules, see [tool-boundaries.md](.src/references/tool-boundaries.md).
 
 <details>
-<summary><b>Architecture Details</b> (for the curious)</summary>
-
-### Bound to Claude Code Native Capabilities
-
-| Mechanism | Purpose |
-|---|---|
-| **Skills** | Route intent to the right tool — no guessing, no auto-execution |
-| **Hooks** | PostToolUse syncs the knowledge graph immediately after file edits |
-| **Task** | Claude's native task system drives loop rhythm |
-| **Agent** | Main window orchestrates, sub-agents execute individual tasks in isolation |
-
-Reusing native capabilities means: no extra wrappers, and when Claude Code upgrades, Pensieve benefits automatically.
-
-### Design Principles
-
-- **System capabilities separated from user data** — plugin updates never overwrite your accumulated project knowledge
-- **Single source of truth for rules** — directories/key files/old paths/plugin keys are uniformly defined by `tools/core/schema.json`
-- **Confirm before executing** — when scope is unclear, confirm first; never auto-start
-- **Read before write** — read format specs before creating any user data
-- **Confidence requirements** — pipeline outputs require >=80% confidence to report; no guesswork in output
+<summary><b>Architecture Details</b></summary>
 
 ### Directory Structure
 
+```text
+<project>/
+├── .claude/skills/pensieve/   # Skill root directory (git clone target)
+│   ├── .src/                  # System files (tracked)
+│   ├── agents/                # Agent configs (tracked)
+│   ├── SKILL.md               # Router file (generated by init, gitignored)
+│   ├── maxims/                # User data (gitignored)
+│   ├── decisions/             # User data (gitignored)
+│   ├── knowledge/             # User data (gitignored)
+│   └── pipelines/             # User data (gitignored)
+└── .state/                    # Runtime artifacts: reports, markers, graph snapshots
 ```
-.claude/skills/pensieve/          ← your project knowledge (user data, never overwritten by plugin)
-├── maxims/                       ← hard rules
-├── decisions/                    ← technical decision records
-├── knowledge/                    ← reference knowledge
-├── pipelines/                    ← executable workflows
-├── loop/                         ← historical loop execution records
-└── SKILL.md                      ← auto-maintained routing + graph
-```
+
+`.src/manifest.json` is the anchor for the skill root directory — scripts use it to locate all paths.
+
+### Design Principles
+
+- **Separate system capabilities from user data** — Updates never overwrite your accumulated project knowledge
+- **Single source of truth for rules** — Directories, key files, and legacy paths are all defined in `.src/core/schema.json`
+- **Confirm before executing** — When scope is unclear, ask first; don't auto-start long-running processes
+- **Read specs before writing data** — Before creating any user data, read the format specs in `.src/references/`
 
 </details>
 
-## For Users Looking for the Linus Prompt
+## About the Linus Prompt
 
-The methodology you know has been upgraded: Linus-style principles are now default maxims, and review capabilities are delivered as pipeline + knowledge. What you get is no longer a prompt — it's an engineering-grade package: prompting, workflow, and execution mechanics delivered together.
+Pensieve was originally known for a Linus Torvalds-style system prompt — using "good taste," "never break userspace," and "simplicity obsession" to constrain agent behavior.
 
-## Community
-
-<img src="./QRCode.png" alt="WeChat group QR code" width="200">
+That engineering philosophy is still at the core of Pensieve, but it is no longer an isolated prompt. It is now distributed across executable structures: default maxims define hard rules, taste-review knowledge provides review criteria, and review/commit pipelines put those rules into practice. What was once a one-off prompt has become a continuously effective engineering capability.
 
 ## License
 
