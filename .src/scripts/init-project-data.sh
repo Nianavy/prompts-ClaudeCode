@@ -34,6 +34,9 @@ PROJECT_SKILL_SCRIPT="$SKILL_ROOT/.src/scripts/maintain-project-skill.sh"
 
 mkdir -p "$DATA_ROOT"/{maxims,decisions,knowledge,pipelines}
 
+ensure_ignore_all "$SKILL_ROOT/.src"
+ensure_ignore_all "$SKILL_ROOT/agents"
+
 TEMPLATE_MAXIMS_DIR="$TEMPLATES_ROOT/maxims"
 if [[ -d "$TEMPLATE_MAXIMS_DIR" ]]; then
   for template_maxim in "$TEMPLATE_MAXIMS_DIR"/*.md; do

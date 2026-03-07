@@ -224,12 +224,8 @@ ensure_user_data_root() {
     echo "$dr"
 }
 
-ensure_state_dir() {
-    local dir
-    dir="${1:-$(state_root "${2:-$(pwd)}")}"
-    dir="$(to_posix_path "$dir")"
-    mkdir -p "$dir"
-
+ensure_ignore_all() {
+    local dir="$1"
     local ignore_file="$dir/.gitignore"
     local payload=""
 
@@ -245,6 +241,14 @@ ensure_state_dir() {
     fi
 
     printf '%s\n' "${payload#$'\n'}" > "$ignore_file"
+}
+
+ensure_state_dir() {
+    local dir
+    dir="${1:-$(state_root "${2:-$(pwd)}")}"
+    dir="$(to_posix_path "$dir")"
+    mkdir -p "$dir"
+    ensure_ignore_all "$dir"
     echo "$dir"
 }
 
