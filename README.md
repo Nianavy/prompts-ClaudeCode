@@ -30,7 +30,7 @@ git clone -b experimental https://github.com/kingkongshot/Pensieve.git .claude/s
 # 2. 初始化（创建用户数据目录，种子化默认内容，生成 SKILL.md 路由文件）
 bash .claude/skills/pensieve/.src/scripts/init-project-data.sh
 
-# 3. 安装 Claude hooks（可选，提供 session marker、explore 注入、自动同步等增量能力）
+# 3. 安装 Claude hooks（Claude Code 用户必装，其他客户端跳过）
 claude plugin marketplace add kingkongshot/Pensieve#claude-plugin
 claude plugin install pensieve@kingkongshot-marketplace --scope project
 ```
