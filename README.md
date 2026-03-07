@@ -43,7 +43,7 @@ rm -rf .agents/skills/pensieve
 
 # 4. 重新安装
 cd ../../..
-git clone -b experimental https://github.com/kingkongshot/Pensieve.git /tmp/pensieve-new
+git clone -b zh https://github.com/kingkongshot/Pensieve.git /tmp/pensieve-new
 cp -r /tmp/pensieve-new/{.git,.gitignore,.src,agents,LICENSE,README.md} .claude/skills/pensieve/
 rm -rf /tmp/pensieve-new
 
@@ -56,7 +56,7 @@ bash .claude/skills/pensieve/.src/scripts/run-doctor.sh --strict
 
 ```bash
 # 1. 安装 skill
-git clone -b experimental https://github.com/kingkongshot/Pensieve.git .claude/skills/pensieve
+git clone -b zh https://github.com/kingkongshot/Pensieve.git .claude/skills/pensieve
 
 # 2. 初始化（创建用户数据目录，种子化默认内容，生成 SKILL.md 路由文件）
 bash .claude/skills/pensieve/.src/scripts/init-project-data.sh
