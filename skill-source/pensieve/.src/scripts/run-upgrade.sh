@@ -168,10 +168,25 @@ run_with_skills_cli() {
     return 0
   fi
 
+  local data_root
+  data_root="$(user_data_root "$SCRIPT_DIR")"
+  local backup_dir="$STATE_DIR/pensieve-upgrade-backup-$$"
+
+  if backup_user_data "$data_root" "$backup_dir"; then
+    echo "[info] user data backed up to $backup_dir" >>"$VERSION_LOG"
+  fi
+
   (
     cd "$cwd"
     npx skills update
   ) >>"$VERSION_LOG" 2>&1
+
+  if [[ -d "$backup_dir" ]]; then
+    restore_user_data "$data_root" "$backup_dir"
+    cleanup_backup "$backup_dir"
+    echo "[info] user data restored" >>"$VERSION_LOG"
+  fi
+
   UPDATE_STRATEGY="skills-update"
 }
 
