@@ -241,6 +241,50 @@ ensure_state_dir() {
     echo "$dir"
 }
 
+USER_DATA_DIRS=(maxims decisions knowledge pipelines loop)
+
+backup_user_data() {
+    local skill_dir="$1"
+    local backup_dir="$2"
+
+    mkdir -p "$backup_dir"
+
+    local found=0
+    for dir_name in "${USER_DATA_DIRS[@]}"; do
+        local src="$skill_dir/$dir_name"
+        if [[ -d "$src" ]] && [[ -n "$(ls -A "$src" 2>/dev/null)" ]]; then
+            cp -a "$src" "$backup_dir/$dir_name"
+            found=1
+        fi
+    done
+
+    if [[ "$found" -eq 0 ]]; then
+        return 1
+    fi
+    return 0
+}
+
+restore_user_data() {
+    local skill_dir="$1"
+    local backup_dir="$2"
+
+    [[ -d "$backup_dir" ]] || return 0
+
+    for dir_name in "${USER_DATA_DIRS[@]}"; do
+        local bak="$backup_dir/$dir_name"
+        [[ -d "$bak" ]] || continue
+
+        local target="$skill_dir/$dir_name"
+        mkdir -p "$target"
+        cp -a "$bak"/. "$target"/
+    done
+}
+
+cleanup_backup() {
+    local backup_dir="$1"
+    [[ -d "$backup_dir" ]] && rm -rf "$backup_dir"
+}
+
 python_bin() {
     command -v python3 || command -v python
 }
