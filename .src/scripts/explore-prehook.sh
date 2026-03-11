@@ -1,7 +1,7 @@
 #!/bin/bash
 # PreToolUse hook helper.
-# When spawning an Explore or Plan agent, inject the current skill root SKILL.md
-# directly into the agent prompt via updatedInput.
+# When spawning an Explore or Plan agent, inject the system SKILL.md and
+# project state.md directly into the agent prompt via updatedInput.
 
 set -euo pipefail
 
@@ -15,16 +15,21 @@ PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 || command -v python || true)}"
 STDIN_DATA="$(cat)"
 [[ -n "$STDIN_DATA" ]] || exit 0
 
-SKILL_FILE="$(project_skill_file "$SCRIPT_DIR")"
+SKILL_FILE="$(skill_md_file "$SCRIPT_DIR")"
+STATE_FILE="$(project_state_file)"
 
-[[ -f "$SKILL_FILE" ]] || exit 0
+# Graceful degradation: silently exit for projects without .pensieve/ (architecture-v2 §5.3).
+# SKILL.md is a static tracked file at the skill root — always present when hooks are installed.
+# state.md exists only after `init`; its absence means this project hasn't opted in.
+[[ -f "$STATE_FILE" ]] || exit 0
 
-"$PYTHON_BIN" - "$SKILL_FILE" "$STDIN_DATA" <<'PY'
+"$PYTHON_BIN" - "$SKILL_FILE" "$STATE_FILE" "$STDIN_DATA" <<'PY'
 import json
 import sys
 
 skill_file = sys.argv[1]
-stdin_raw = sys.argv[2]
+state_file = sys.argv[2]
+stdin_raw = sys.argv[3]
 
 try:
     payload = json.loads(stdin_raw)
@@ -53,7 +58,18 @@ try:
 except Exception:
     sys.exit(0)
 
-updated_prompt = guidance + skill_content + "\n\n---\n\n" + original_prompt
+# Also inject project state if available
+state_content = ""
+try:
+    with open(state_file, "r", encoding="utf-8") as f:
+        state_content = f.read()
+except Exception:
+    pass
+
+updated_prompt = guidance + skill_content
+if state_content:
+    updated_prompt += "\n\n---\n\n## Project State\n\n" + state_content
+updated_prompt += "\n\n---\n\n" + original_prompt
 
 updated_input = dict(tool_input)
 updated_input["prompt"] = updated_prompt
