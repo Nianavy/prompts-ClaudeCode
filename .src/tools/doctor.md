@@ -18,7 +18,7 @@ description: 只读扫描当前项目的 .pensieve/ 用户数据目录，检查 
 > All `.src/` paths below are relative to the skill root (`$PENSIEVE_SKILL_ROOT`, typically `~/.claude/skills/pensieve/`).
 
 ```bash
-bash "$PENSIEVE_SKILL_ROOT/.src/scripts/run-doctor.sh" --strict
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/run-doctor.sh" --strict
 ```
 
 Doctor 只维护：

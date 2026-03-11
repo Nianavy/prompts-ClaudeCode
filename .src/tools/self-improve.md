@@ -32,7 +32,7 @@ description: 从对话、diff、review 结果中提取可复用结论，写入 m
 > All `.src/` paths below are relative to the skill root (`$PENSIEVE_SKILL_ROOT`, typically `~/.claude/skills/pensieve/`).
 
 ```bash
-bash "$PENSIEVE_SKILL_ROOT/.src/scripts/maintain-project-state.sh" --event self-improve --note "描述"
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/maintain-project-state.sh" --event self-improve --note "描述"
 ```
 
 Claude Code 环境下由 hook 自动触发，其他环境须手动运行。

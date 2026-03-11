@@ -17,11 +17,11 @@ description: 迁移工具。将旧版本用户数据自动迁移到 v2 目录结
 > All `.src/` paths below are relative to the skill root (`$PENSIEVE_SKILL_ROOT`, typically `~/.claude/skills/pensieve/`).
 
 ```bash
-bash "$PENSIEVE_SKILL_ROOT/.src/scripts/run-migrate.sh"
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/run-migrate.sh"
 ```
 
 可选 dry-run：
 
 ```bash
-bash "$PENSIEVE_SKILL_ROOT/.src/scripts/run-migrate.sh" --dry-run
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/run-migrate.sh" --dry-run
 ```

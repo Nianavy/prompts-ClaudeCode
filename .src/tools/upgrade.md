@@ -21,17 +21,17 @@ Hooks 通过 `install-hooks.sh` 全局安装，不需要单独更新。
 > All `.src/` paths below are relative to the skill root (`$PENSIEVE_SKILL_ROOT`, typically `~/.claude/skills/pensieve/`).
 
 ```bash
-bash "$PENSIEVE_SKILL_ROOT/.src/scripts/run-upgrade.sh"
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/run-upgrade.sh"
 ```
 
 可选 dry-run：
 
 ```bash
-bash "$PENSIEVE_SKILL_ROOT/.src/scripts/run-upgrade.sh" --dry-run
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/run-upgrade.sh" --dry-run
 ```
 
 升级后手动跑：
 
 ```bash
-bash "$PENSIEVE_SKILL_ROOT/.src/scripts/run-doctor.sh" --strict
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/run-doctor.sh" --strict
 ```
