@@ -1,5 +1,5 @@
 ---
-description: 刷新当前 git clone 的 Pensieve skill 源码。优先 git pull --ff-only，远程 force push 时自动回退到 fetch+reset；不做结构迁移与 doctor 分级。
+description: Refresh the current git clone of the Pensieve skill source. Prefers git pull --ff-only; automatically falls back to fetch+reset when the remote has been force-pushed. Does not perform structural migration or doctor grading.
 ---
 
 # Upgrade Tool
@@ -11,10 +11,10 @@ description: 刷新当前 git clone 的 Pensieve skill 源码。优先 git pull 
 - User requests a Pensieve upgrade
 - Need to confirm version changes before and after upgrade
 
-如果用户先问"怎么更新 Pensieve"，先读 `.src/references/skill-lifecycle.md`，再执行本工具。
+If the user first asks "how to update Pensieve", read `.src/references/skill-lifecycle.md` first, then run this tool.
 
-这个工具只负责全局 skill checkout（`~/.claude/skills/pensieve/`）。
-Hooks 通过 `install-hooks.sh` 全局安装，不需要单独更新。
+This tool is only responsible for the global skill checkout (`~/.claude/skills/pensieve/`).
+Hooks are installed globally via `install-hooks.sh` and do not need to be updated separately.
 
 ## Standard execution
 

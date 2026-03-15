@@ -114,7 +114,7 @@ def event_display_name(raw: str) -> str:
 def load_graph_ref() -> str:
     if not graph_file.exists():
         return "_(graph not generated yet)_"
-    return f"见 `.pensieve/.state/{graph_file.name}`（按需读取）"
+    return f"See `.pensieve/.state/{graph_file.name}` (loaded on demand)"
 
 
 def replace_section(lines: list[str], header: str, new_body: list[str]) -> list[str]:

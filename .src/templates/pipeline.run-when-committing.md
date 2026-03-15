@@ -29,9 +29,9 @@ Before committing, automatically extract insights from the session context + dif
 
 The value of capturing insights lies in reuse next time; unsubstantiated guesses will mislead future decisions.
 
-- 只沉淀"可复用且有证据"的洞察；无法验证的猜测不落库。
-- 分类遵守语义分层：IS → `knowledge`，WANT → `decision`，MUST → `maxim`。
-- 用语义而非"knowledge 优先"来分配，因为错误分类会导致约束力度不匹配（本该是 MUST 的写成了 knowledge，后续容易被忽略）。
+- Only capture insights that are reusable and evidence-backed; unverifiable guesses must not be stored.
+- Classify according to semantic layers: IS -> `knowledge`, WANT -> `decision`, MUST -> `maxim`.
+- Assign by semantics, not by "default to knowledge", because misclassification causes a mismatch in binding strength (something that should be MUST but is written as knowledge will easily be ignored later).
 
 ---
 
@@ -70,17 +70,17 @@ The value of capturing insights lies in reuse next time; unsubstantiated guesses
 3. Current session context
 4. `.src/tools/self-improve.md`
 
-**执行步骤**：
-1. 读取 `self-improve.md`，按其 Phase 1（提取与分类）+ Phase 2（读取规范+写入）执行
-2. 从会话中提取核心洞察（可以是多条）
-3. 为每条洞察先判定语义层并分类（IS->knowledge, WANT->decision, MUST->maxim；必要时可多层同时落地）
-4. 读取 `.src/references/` 中目标类型的规范，按规范生成内容
-5. 类型特定要求：
-   - `decision`：包含"探索减负三项"（下次少问/少查/失效条件）
-   - 探索型 `knowledge`：包含（状态转换 / 症状→根因→定位 / 边界与所有权 / 反模式 / 验证信号）
-   - `pipeline`：需满足条件（重复出现 + 不可交换 + 可验证）
-6. 写入目标路径，补关联链接
-7. 刷新 Pensieve 项目状态：
+**Steps**:
+1. Read `self-improve.md` and execute its Phase 1 (extract and classify) + Phase 2 (read spec + write)
+2. Extract core insights from the session (may be multiple)
+3. For each insight, first determine the semantic layer and classify (IS->knowledge, WANT->decision, MUST->maxim; may land in multiple layers simultaneously if needed)
+4. Read the spec for the target type from `.src/references/`, and generate content according to the spec
+5. Type-specific requirements:
+   - `decision`: include the "three exploration-reduction items" (fewer questions next time / fewer lookups / invalidation conditions)
+   - Exploration-type `knowledge`: include (state transitions / symptom->root cause->location / boundaries and ownership / anti-patterns / verification signals)
+   - `pipeline`: must meet conditions (recurring + non-interchangeable steps + verifiable)
+6. Write to target path, add association links
+7. Refresh Pensieve project state:
    ```
    bash "$PENSIEVE_SKILL_ROOT/.src/scripts/maintain-project-state.sh" --event self-improve --note "auto-improve: {files}"
    ```
@@ -88,7 +88,7 @@ The value of capturing insights lies in reuse next time; unsubstantiated guesses
 
 **DO NOT**: Do not ask user for confirmation, do not show drafts awaiting approval, write directly
 
-**完成标准**：洞察已写入用户数据（或明确无需沉淀），`state.md` 与 `.state/pensieve-user-data-graph.md` 已刷新
+**Completion criteria**: Insights have been written to user data (or explicitly determined as not worth capturing), `state.md` and `.state/pensieve-user-data-graph.md` have been refreshed
 
 ---
 
@@ -114,6 +114,6 @@ The value of capturing insights lies in reuse next time; unsubstantiated guesses
 
 ## Failure Fallback
 
-1. `git diff --cached` 为空：跳过 Task 2/Task 3，输出"无 staged 变更，不提交"。
-2. 沉淀步骤失败：记录阻塞原因并跳过沉淀，继续 Task 3；结尾追加"建议运行 `doctor`"。
-3. `state.md` 维护失败：保留已沉淀内容，报告失败命令与重试建议，不回滚已写入文件。
+1. `git diff --cached` is empty: skip Task 2/Task 3, output "no staged changes, nothing to commit".
+2. Capture step fails: log the blocking reason and skip capture, continue to Task 3; append "suggest running `doctor`" at the end.
+3. `state.md` maintenance fails: keep already-captured content, report the failed command and retry suggestion, do not roll back already-written files.

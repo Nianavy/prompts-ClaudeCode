@@ -1,5 +1,5 @@
 ---
-description: 只读扫描当前项目的 .pensieve/ 用户数据目录，检查 frontmatter、链接、目录结构、关键种子文件与 auto memory 对齐情况，输出固定格式报告。
+description: Read-only scan of the current project's .pensieve/ user data directory. Checks frontmatter, links, directory structure, critical seed files, and auto-memory alignment, then outputs a fixed-format report.
 ---
 
 # Doctor Tool
@@ -23,8 +23,8 @@ bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/run-doc
 
 Doctor only maintains:
 
-- `<project>/.pensieve/state.md`（生命周期状态 + Graph）
-- 运行时图谱输出如 `.pensieve/.state/pensieve-user-data-graph.md`
+- `<project>/.pensieve/state.md` (lifecycle state + Graph)
+- Runtime graph output such as `.pensieve/.state/pensieve-user-data-graph.md`
 - Claude auto memory `~/.claude/projects/<project>/memory/MEMORY.md`
 
 It will not modify your business code.

@@ -1,137 +1,137 @@
-# 四层记忆架构分析
+# Four-Layer Memory Architecture Analysis
 
-> 状态：待决策
-> 创建：2026-03-11
-> 关联：`docs/maxim-and-auto-memory-analysis.md`（已删除，本文档替代）
-
----
-
-## 1. 分析目标
-
-评估 Pensieve 四层语义模型（IS/WANT/MUST/HOW）的设计意图与执行现实是否对齐，识别 AI 误解风险，提出改进方向。
+> Status: Pending decision
+> Created: 2026-03-11
+> Related: `docs/maxim-and-auto-memory-analysis.md` (deleted, superseded by this document)
 
 ---
 
-## 2. 现状总览
+## 1. Analysis Objective
 
-| 层 | 语义 | 准入标准 | 存储 | 种子模板 |
+Evaluate whether the design intent of Pensieve's four-layer semantic model (IS/WANT/MUST/HOW) aligns with execution reality, identify AI misinterpretation risks, and propose directions for improvement.
+
+---
+
+## 2. Current State Overview
+
+| Layer | Semantics | Admission Criteria | Storage | Seed Template |
 |---|---|---|---|---|
-| Knowledge | IS（事实） | 不写就反复拖慢执行 | `knowledge/{name}/content.md` | taste-review |
-| Decision | WANT（选择） | 删掉它未来更易犯错 | `decisions/{date}-{statement}.md` | 无 |
-| Maxim | MUST（准则） | 跨项目+跨语言+回归风险+一句话 | `maxims/{conclusion}.md` | 4 条哲学原则 |
-| Pipeline | HOW（流程） | 重复出现+顺序不可交换+可验证 | `pipelines/run-when-*.md` | reviewing-code, committing |
+| Knowledge | IS (facts) | Would repeatedly slow execution if not written down | `knowledge/{name}/content.md` | taste-review |
+| Decision | WANT (choices) | Removing it makes future mistakes more likely | `decisions/{date}-{statement}.md` | None |
+| Maxim | MUST (principles) | Cross-project + cross-language + regression risk + one sentence | `maxims/{conclusion}.md` | 4 philosophical principles |
+| Pipeline | HOW (processes) | Recurring + non-interchangeable order + verifiable | `pipelines/run-when-*.md` | reviewing-code, committing |
 
 ---
 
-## 3. 逐层评价
+## 3. Layer-by-Layer Evaluation
 
-### 3.1 Knowledge — 最清晰
+### 3.1 Knowledge -- Clearest
 
-- 定义干净：IS 语义 + "不写就反复拖慢" 准入标准
-- "别把 knowledge 写成观点集，它必须能被验证或追溯" 是有效护栏
-- **低风险**。唯一隐患是探索型知识的建议清单（状态转换、症状→根因→定位……）可能让 AI 过度形式化
+- Clean definition: IS semantics + "would repeatedly slow execution if not written down" admission criteria
+- "Don't turn knowledge into an opinion collection -- it must be verifiable or traceable" is an effective guardrail
+- **Low risk**. The only concern is that the suggested list for exploratory knowledge (state transitions, symptom -> root cause -> localization...) may cause AI to over-formalize
 
-### 3.2 Decision — 最成功
+### 3.2 Decision -- Most Successful
 
-- 准入门槛合理，与 knowledge 边界清晰（事实 vs 选择）
-- **"探索减负"是整个系统中最有价值的设计** — 强制记录"下次少问什么、少查什么、何时失效"
-- **中低风险**。格式要求偏重，AI 可能为满足格式而填充低价值内容，但可接受
+- Admission threshold is reasonable, with a clear boundary from knowledge (facts vs choices)
+- **"Exploration offloading" is the most valuable design in the entire system** -- forcing documentation of "what to ask less next time, what to look up less, when it expires"
+- **Medium-low risk**. Format requirements are somewhat heavy; AI may fill in low-value content to satisfy the format, but this is acceptable
 
-### 3.3 Maxim — 问题最大
+### 3.3 Maxim -- Most Problematic
 
-详见下文第 4 节。
+See Section 4 below for details.
 
-### 3.4 Pipeline — 精良但使用场景窄
+### 3.4 Pipeline -- Well-Crafted but Narrow Use Case
 
-- 三条准入标准清晰合理，`run-when-*` 命名直接暗示触发条件
-- 两个种子 pipeline 是高质量示范
-- **中风险**。格式要求非常重（frontmatter 8 字段 + 信号判断 + Task Blueprint + 失败回退 + 链接），创建成本高，与"不确定时先最小可运行版本"矛盾
+- Three admission criteria are clear and reasonable; `run-when-*` naming directly implies trigger conditions
+- The two seed pipelines are high-quality examples
+- **Medium risk**. Format requirements are very heavy (8 frontmatter fields + signal detection + Task Blueprint + failure fallback + links); high creation cost contradicts "when uncertain, start with a minimum viable version"
 
 ---
 
-## 4. Maxim 层的核心问题
+## 4. Core Problems with the Maxim Layer
 
-### 4.1 设计意图与存储位置矛盾
+### 4.1 Design Intent Contradicts Storage Location
 
-| 维度 | 文档声称 | 实际情况 |
+| Dimension | Documentation Claims | Reality |
 |---|---|---|
-| 作用域 | "跨项目、跨语言" | 存储在 `<project>/.pensieve/maxims/` — 项目级目录 |
-| 准入标准 | 四条同时满足 | 种子模板满足，但用户实践中几乎不可能新增 |
-| 与 decision 关系 | "只在当前项目有效 → 那是 decision" | 很多 MUST 级规则是项目特有的（如"本项目 API 必须幂等"） |
-| self-improve 分类 | AI 需判断 maxim vs decision | 门槛让 AI 几乎总选 decision |
+| Scope | "Cross-project, cross-language" | Stored in `<project>/.pensieve/maxims/` -- a project-level directory |
+| Admission criteria | All four must be met simultaneously | Seed templates satisfy them, but users can almost never add new ones in practice |
+| Relationship with decision | "Only valid in this project -> that's a decision" | Many MUST-level rules are project-specific (e.g., "all APIs in this project must be idempotent") |
+| self-improve classification | AI must judge maxim vs decision | The high threshold causes AI to almost always choose decision |
 
-### 4.2 三个具体误导
+### 4.2 Three Specific Misleading Points
 
-**误导 1：门槛过高，层级形同虚设**
+**Misleading Point 1: Threshold too high, rendering the layer effectively unused**
 
-"换语言仍成立" 把 maxim 限制在纯哲学层面。"所有 mutation 必须经过 command bus" 这种项目级硬规则被排除在外，但这恰恰是最需要标记为 MUST 的东西。
+"Must still hold when switching languages" restricts maxims to the purely philosophical level. Rules like "all mutations must go through the command bus" are excluded despite being project-level hard rules -- exactly the kind of thing that most needs to be marked as MUST.
 
-**误导 2：种子模板给出了错误的抽象层级范例**
+**Misleading Point 2: Seed templates set the wrong abstraction level**
 
-四条种子 maxim 全是 Linus Torvalds 式的通用哲学。AI 因此认为 maxim 应该在这个抽象层级，不会写入具体的、可执行的项目准则。
+All four seed maxims are Linus Torvalds-style universal philosophy. AI consequently believes maxims should be at this abstraction level and won't write concrete, actionable project principles.
 
-**误导 3：与 CLAUDE.md 功能重叠**
+**Misleading Point 3: Overlaps with CLAUDE.md functionality**
 
-CLAUDE.md 已包含相同的 Linus 哲学（好品味、never break userspace、实用主义、简洁至上）。种子 maxim 重复了相同理念。AI 看到两处相同指令，不确定优先级关系。
-
----
-
-## 5. 四层交互问题
-
-### 5.1 self-improve 时分类模糊
-
-AI 被迫在语义层级（IS/WANT/MUST/HOW）和作用域（项目级/跨项目）两个维度同时判断。示例：
-
-- "本项目的错误码必须用枚举" — 按定义是 decision（项目特有），但语义上是 MUST
-- "React useEffect 清理顺序是 X" — 是 knowledge 还是该忽略（AI 下次可自己查）
-
-### 5.2 链接要求增加写入摩擦
-
-decision 和 pipeline 强制至少一条 `[[...]]` 链接。self-improve 发生在任务末尾，AI 不一定清楚该链接到哪个已有节点。可能结果：
-- 链接指向不存在的节点（doctor 报 unresolved）
-- 为满足要求写无意义链接
-- 跳过 self-improve
-
-### 5.3 写入无校验
-
-self-improve 是唯一写入入口，但没有写入时校验。格式/链接/frontmatter 合规性全靠 doctor 事后检查。写入质量完全依赖 AI 对 reference spec 的理解。
+CLAUDE.md already contains the same Linus philosophy (good taste, never break userspace, pragmatism, simplicity above all). The seed maxims repeat the same ideas. When AI sees identical directives in two places, it becomes uncertain about the priority relationship.
 
 ---
 
-## 6. 执行机制的隐含假设
+## 5. Cross-Layer Interaction Issues
 
-1. **hook 注入不对称**：state.md 注入到 Explore/Plan agent，但它们无写入能力；实际写入在主对话中，主对话不一定读过 state.md
-2. **种子模板一次性播种**：升级不覆盖，种子质量永久定义用户对每个层级的第一印象
-3. **Python 依赖**：所有核心逻辑（doctor/migrate/maintain-project-state）需要 Python 3.8+
+### 5.1 Classification Ambiguity During self-improve
+
+AI is forced to judge simultaneously along two dimensions: semantic level (IS/WANT/MUST/HOW) and scope (project-level/cross-project). Examples:
+
+- "Error codes in this project must use enums" -- by definition a decision (project-specific), but semantically a MUST
+- "React useEffect cleanup order is X" -- is this knowledge, or should it be ignored (AI can look it up next time)
+
+### 5.2 Link Requirements Increase Write Friction
+
+Decision and pipeline require at least one `[[...]]` link. self-improve happens at the end of a task, when AI may not know which existing node to link to. Possible outcomes:
+- Link points to a nonexistent node (doctor reports unresolved)
+- Meaningless link added just to satisfy the requirement
+- self-improve is skipped entirely
+
+### 5.3 No Write-Time Validation
+
+self-improve is the only write entry point, but there is no write-time validation. Format/link/frontmatter compliance is entirely deferred to doctor for after-the-fact checking. Write quality depends entirely on AI's understanding of the reference spec.
 
 ---
 
-## 7. 待决策：Maxim 层的未来
+## 6. Implicit Assumptions in the Execution Mechanism
 
-### 方案 A：重定义为项目级 MUST
+1. **Asymmetric hook injection**: state.md is injected into the Explore/Plan agent, but they have no write capability; actual writes happen in the main conversation, which may not have read state.md
+2. **One-time seed template seeding**: Upgrades don't overwrite seeds; seed quality permanently defines the user's first impression of each layer
+3. **Python dependency**: All core logic (doctor/migrate/maintain-project-state) requires Python 3.8+
 
-- 删除跨项目/跨语言要求
-- 准入标准改为："本项目反复证明必须遵守的硬规则"
-- 与 decision 的区别变成 MUST vs SHOULD
-- 重写 `maxims.md` 和种子模板
-- **代价**：需要重新设计种子模板内容
+---
 
-### 方案 B：合并到 Decision 层
+## 7. Pending Decision: The Future of the Maxim Layer
 
-- 删除 maxim 层
-- decision 增加 `priority: must | should` 字段
-- 种子哲学移入 CLAUDE.md 或 knowledge
-- **代价**：decision 层变"胖"，但减少一个概念，简化 self-improve 分类
+### Option A: Redefine as Project-Level MUST
 
-### 方案 C：保持现状但修正描述
+- Remove cross-project/cross-language requirements
+- Change admission criteria to: "Hard rules that this project has repeatedly proven must be followed"
+- Distinguish from decision as MUST vs SHOULD
+- Rewrite `maxims.md` and seed templates
+- **Cost**: Requires redesigning seed template content
 
-- 承认 maxim 是"预装编码哲学"，不期望用户新增
-- 删除 self-improve 向 maxim 写入的路径
-- 降低维护成本但也降低了层级价值
-- **代价**：maxim 变成只读层，存在感进一步降低
+### Option B: Merge into the Decision Layer
 
-### 决策输入
+- Remove the maxim layer
+- Add `priority: must | should` field to decision
+- Move seed philosophy into CLAUDE.md or knowledge
+- **Cost**: Decision layer gets "heavier," but removes one concept and simplifies self-improve classification
 
-需要回答的核心问题：**Pensieve 的用户是否真的需要一个独立的 MUST 层，还是 decision + priority 字段就够了？**
+### Option C: Keep as-is but Fix the Description
 
-如果答案是"需要"，走方案 A。如果答案是"不需要"，走方案 B。方案 C 是妥协但不解决根本问题。
+- Acknowledge that maxims are "pre-installed coding philosophy" with no expectation for user additions
+- Remove the self-improve write path to maxim
+- Reduces maintenance cost but also reduces the layer's value
+- **Cost**: Maxim becomes a read-only layer, its presence further diminished
+
+### Decision Input
+
+The core question to answer: **Do Pensieve users actually need an independent MUST layer, or is decision + priority field sufficient?**
+
+If the answer is "yes," go with Option A. If the answer is "no," go with Option B. Option C is a compromise that does not solve the fundamental problem.

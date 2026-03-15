@@ -1,5 +1,5 @@
 ---
-description: 迁移工具。将旧版本用户数据自动迁移到 v2 目录结构，并对齐关键种子文件；不做版本升级，不给 doctor 分级。
+description: Migration tool. Automatically migrates legacy user data to the v2 directory structure and aligns critical seed files. Does not perform version upgrades or doctor grading.
 ---
 
 # Migrate Tool
@@ -8,9 +8,9 @@ description: 迁移工具。将旧版本用户数据自动迁移到 v2 目录结
 
 ## Use when
 
-- 从 v1（项目级安装）迁移到 v2（用户级系统 + 项目级数据）
-- doctor 报告关键文件缺失或 critical file drift
-- 需要补齐目录结构或重新对齐种子文件
+- Migrating from v1 (project-level install) to v2 (user-level system + project-level data)
+- Doctor reports critical file missing or critical file drift
+- Need to fill in directory structure or re-align seed files
 
 ## Standard execution
 
