@@ -4,7 +4,7 @@ type: knowledge
 title: Pensieve Installation and Updates
 status: active
 created: 2026-03-06
-updated: 2026-03-07
+updated: 2026-03-10
 tags: [pensieve, install, update, operations]
 ---
 
@@ -14,138 +14,121 @@ When the user asks how to install, initialize, update, reinstall, or uninstall P
 
 ## Installation
 
-### Method A: Install the main branch skill (required)
+### 第一步：安装系统代码（全局，一次性）
 
-Clone the repository directly into the project's skill directory:
+把仓库 clone 到用户级 skill 目录：
 
 ```bash
-git clone -b main https://github.com/kingkongshot/Pensieve.git .claude/skills/pensieve
+# 英文用户
+git clone -b main https://github.com/kingkongshot/Pensieve.git ~/.claude/skills/pensieve
+
+# 中文用户
+git clone -b zh https://github.com/kingkongshot/Pensieve.git ~/.claude/skills/pensieve
 ```
 
 Notes:
 
-- The `main` branch repository root is the skill root — there is no longer a `skill-source/pensieve/` layer
-- Tracked system files are `.src/`, `agents/`
-- The root-level `SKILL.md` is a generated file, written to a fixed location after initialization, and ignored by `.gitignore`
-- User data directories are `maxims/decisions/knowledge/pipelines`
-- User data directories and the generated `SKILL.md` are both ignored by the root `.gitignore`, so `git pull` will not overwrite them
-- No longer depends on `npx skills add --copy`
+- 系统文件（`.src/`、`agents/`、`SKILL.md`）由 git 跟踪
+- `SKILL.md` 是静态、tracked 文件——skill 接口声明
+- 一次安装服务所有项目
 
-After installation:
-
-1. Have the agent run `init`
-2. Or manually execute in the skill root directory:
+### 第二步：安装 hooks（全局，一次性）
 
 ```bash
-bash .src/scripts/init-project-data.sh
+bash ~/.claude/skills/pensieve/.src/scripts/install-hooks.sh
 ```
 
-### Method B: Install Claude plugin hooks (optional add-on)
+这会把 hook 配置写入 `~/.claude/settings.json`。hooks 自动对所有项目生效。没有 `.pensieve/` 的项目不受影响（hooks 静默退出）。
 
-Hooks are not on the `main` branch; they are on a separate `claude-plugin` branch, installed via marketplace:
+### 第三步：初始化项目数据（每个项目）
 
 ```bash
-claude plugin marketplace add kingkongshot/Pensieve#claude-plugin
-claude plugin install pensieve@kingkongshot-marketplace --scope project
+cd <your-project>
+bash ~/.claude/skills/pensieve/.src/scripts/init-project-data.sh
 ```
 
-Notes:
+或者让 agent 执行 `init`。
 
-- The plugin only provides hooks; it does not carry skill content
-- Hooks and skill lifecycles are decoupled: the plugin updates via marketplace, the skill updates via git
-- If you want Claude hooks, you still need to complete Method A's skill clone first
+这会在 `<project>/.pensieve/` 下创建 `maxims/decisions/knowledge/pipelines` 并种子化默认内容。
 
 ## Post-initialization verification
 
 ```bash
-bash .src/scripts/run-doctor.sh --strict
+bash ~/.claude/skills/pensieve/.src/scripts/run-doctor.sh --strict
 ```
 
 PASS conditions:
 
-- `.src/` exists
-- `agents/` exists
-- Root-level `SKILL.md` has been generated
-- `maxims/decisions/knowledge/pipelines` directories are all present
-- `.state/` is generated in the project root
-- Default pipelines and taste-review knowledge have been seeded
+- skill 根目录存在 `.src/`
+- skill 根目录存在 `SKILL.md`（静态、tracked）
+- `<project>/.pensieve/{maxims,decisions,knowledge,pipelines}` 目录齐全
+- `<project>/.pensieve/.state/` 已生成
+- `<project>/.pensieve/state.md` 已生成
+- 默认 pipeline 与 taste-review knowledge 已种子化
 
 ## Updates
 
-### Updating the main branch skill
+### 更新系统代码
 
 ```bash
-cd .claude/skills/pensieve
-git pull --ff-only
+cd ~/.claude/skills/pensieve
+git pull --ff-only || { git fetch origin && git reset --hard "origin/$(git rev-parse --abbrev-ref HEAD)"; }
 ```
 
-Fixed sequence after updating:
+`--ff-only` 适用于正常更新；远程被 force push 时回退到 `fetch + reset`（skill 目录只有 tracked 文件，安全）。
+
+一次更新对所有项目生效。更新后：
 
 ```bash
-bash .src/scripts/run-doctor.sh --strict
+cd <your-project>
+bash ~/.claude/skills/pensieve/.src/scripts/run-doctor.sh --strict
 ```
 
-If `doctor` reports structural migration issues, then run:
+如果 `doctor` 报结构迁移类问题：
 
 ```bash
-bash .src/scripts/run-migrate.sh
-bash .src/scripts/run-doctor.sh --strict
+bash ~/.claude/skills/pensieve/.src/scripts/run-migrate.sh
+bash ~/.claude/skills/pensieve/.src/scripts/run-doctor.sh --strict
 ```
 
-### Updating claude-plugin branch hooks
+## 重装
 
-```bash
-claude plugin update pensieve
-```
+如果系统文件被你自己改乱了：
 
-Interactive equivalent command:
+1. 备份项目用户数据：`<project>/.pensieve/`（每个项目）
+2. 删除旧的 skill checkout：`rm -rf ~/.claude/skills/pensieve`
+3. 重新 clone（第一步）
+4. 对每个项目跑 `init`（第三步）
+5. 跑 `doctor`
 
-```text
-/plugin update pensieve
-```
-
-This only updates hooks and does not affect user data in the main branch skill clone.
-
-## Reinstallation
-
-If system files have been corrupted by your own changes, the simplest reinstallation method is:
-
-1. Back up local user data directories: `maxims/`, `decisions/`, `knowledge/`, `pipelines/`
-2. Delete the old skill checkout
-3. Re-run the installation
-4. Run `init`
-5. Run `doctor`
-
-If it is just a normal upgrade, do not reinstall — use `git pull --ff-only` directly.
+如果只是正常升级，不要重装，直接用 upgrade 工具或手动 `git pull`
 
 ## Uninstallation
 
-Simply delete the installed skill root directory.
+```bash
+# 从 ~/.claude/settings.json 中手动移除 pensieve hook 条目
+# 删除系统代码
+rm -rf ~/.claude/skills/pensieve
 
-If you also want to preserve user data, back up first:
+# 删除项目数据（可选，每个项目）
+rm -rf <project>/.pensieve
+```
 
-- `maxims/`
-- `decisions/`
-- `knowledge/`
-- `pipelines/`
-- `.state/` (if you want to keep health check reports, migration backups, session markers)
+## Hook 增量能力
 
-## Claude add-on capabilities
+安装 hooks 后，还会多出：
 
-If the `claude-plugin` branch is also installed, you additionally get:
-
-- SessionStart marker check
-- PreToolUse Explore/Plan prompt injection
-- PostToolUse graph and auto memory auto-sync
-- Claude native `/plugin update` lifecycle
+- SessionStart marker 检查
+- PreToolUse Explore/Plan prompt 注入（SKILL.md + state.md）
+- PostToolUse 图谱与 auto memory 自动同步
 
 ## Routing rules
 
-- Question "How to install/reinstall Pensieve":
-  Read this file first, then guide to `init`
-- Question "How to update Pensieve":
-  Read this file first, then guide to `upgrade`
-- Question "How to clean up old structures/old graph":
-  Read this file first, then guide to `migrate`
-- Question "How to verify everything is fine after installation":
-  Read this file first, then guide to `doctor`
+- 问"怎么安装/重装 Pensieve"：
+  先读本文件，再引导到 `init`
+- 问"怎么更新 Pensieve"：
+  先读本文件，再引导到 `upgrade`
+- 问"怎么清理旧结构/旧 graph"：
+  先读本文件，再引导到 `migrate`
+- 问"安装后怎么确认正常"：
+  先读本文件，再引导到 `doctor`

@@ -1,5 +1,5 @@
 ---
-description: Initialize the current user data root directory and populate seed files. Perform baseline exploration and code review, producing settleable candidates. Idempotent; does not overwrite existing user data.
+description: 初始化当前项目的 .pensieve/ 用户数据目录并补齐种子文件，执行基线探索与代码审查，产出可沉淀候选。幂等，不覆盖已有用户数据。
 ---
 
 # Init Tool
@@ -8,12 +8,12 @@ description: Initialize the current user data root directory and populate seed f
 
 ## Use when
 
-- First time onboarding to Pensieve
-- User needs post-install initialization or re-populating the default structure after reinstall
-- Missing base directories: `maxims/decisions/knowledge/pipelines`
-- Missing default pipeline or taste-review knowledge
+- 首次在项目中接入 Pensieve
+- 用户需要安装后初始化或重装后补齐默认结构
+- 缺少基础目录：`<project>/.pensieve/{maxims,decisions,knowledge,pipelines}`
+- 缺少默认 pipeline 或 taste-review 知识
 
-If the user first asks "how to install/reinstall Pensieve", read `.src/references/skill-lifecycle.md` first, then execute this tool.
+如果用户先问"怎么安装/重装 Pensieve"，先读 `.src/references/skill-lifecycle.md`，再执行本工具。
 
 ## Failure fallback
 
@@ -22,17 +22,19 @@ If the user first asks "how to install/reinstall Pensieve", read `.src/reference
 
 ## Standard execution
 
+> All `.src/` paths below are relative to the skill root (`$PENSIEVE_SKILL_ROOT`, typically `~/.claude/skills/pensieve/`).
+
 ```bash
-bash .src/scripts/init-project-data.sh
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/init-project-data.sh"
 ```
 
 Then:
 
-1. Read `pipelines/run-when-reviewing-code.md`
-2. Perform an exploration based on recent commits and hot files
-3. Produce a "settleable candidates list", but do not auto-write
-4. Finally remind the user to manually run doctor:
+1. 读取 `<project>/.pensieve/pipelines/run-when-reviewing-code.md`
+2. 基于最近提交与热点文件做一次探索
+3. 产出"可沉淀候选清单"，但不自动写入
+4. 最后提醒用户手动跑 doctor：
 
 ```bash
-bash .src/scripts/run-doctor.sh --strict
+bash "${PENSIEVE_SKILL_ROOT:-$HOME/.claude/skills/pensieve}/.src/scripts/run-doctor.sh" --strict
 ```
