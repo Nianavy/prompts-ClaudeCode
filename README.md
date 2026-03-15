@@ -11,7 +11,7 @@
 
 </div>
 
-**In one sentence: Pensieve is a self-growing CLAUDE.md that runs as a skill -- minimal context usage, compatible with any AI tool that supports skills.**
+**In one sentence: Pensieve is a self-growing CLAUDE.md that runs as a skill -- minimal context usage, compatible with all AI tools that support skills.**
 
 | | CLAUDE.md / agents.md | Pensieve |
 |---|---|---|
@@ -31,70 +31,78 @@
 | Forget why you designed it this way three months later | Decisions record context and alternatives |
 | Have to re-read docs to locate module boundaries every time | Knowledge caches exploration results, reuse directly |
 
-## Self-Reinforcement Loop
+## Self-Reinforcing Loop
 
-Pensieve doesn't just store docs -- it makes every agent conversation more precise:
+Pensieve doesn't just store documentation -- it makes every agent conversation more precise:
 
 - **Validate AI-generated plans** -- `"Use pensieve to check the accuracy of this plan"` -> Automatically cross-references maxims and decisions; plans that violate architectural conventions are intercepted before execution
-- **Narrow exploration scope** -- `"Use pensieve to locate the payment module entry point"` -> Knowledge contains previous exploration results, reused directly without global search, saving tokens and time
-- **Build implicit connections** -- `"Use pensieve to analyze what workflows this refactoring will affect"` -> Four-layer knowledge forms a graph through semantic links, following association chains to discover design intent and dependencies
-- **Reduce repetitive confirmations** -- `"Use pensieve conventions to commit code"` -> Conventions and decisions are already accumulated; no more repeated questions like "what style?" or "where's the boundary?"
+- **Narrow the exploration scope** -- `"Use pensieve to locate the entry point of the payment module"` -> Knowledge contains previous exploration results, reuse directly without global search, saving tokens and time
+- **Establish implicit connections** -- `"Use pensieve to analyze which workflows this refactoring will affect"` -> Four-layer knowledge forms a graph through semantic links, following association chains to discover design intent and dependencies
+- **Reduce repeated confirmations** -- `"Use pensieve conventions to commit code"` -> Conventions and decisions are already accumulated, no more asking "what style?" or "where's the boundary?"
 
 You don't need to manually maintain the knowledge base -- daily development feeds it automatically:
 
 ```
-    Dev ──→ Commit ──→ Review (pipeline)
-     ↑                      │
-     │   ← Auto-accumulate  │
-     │      experience       │
-     │                      ↓
-     └── maxim / decision / knowledge / pipeline
+    Develop --> Commit --> Review (pipeline)
+     ^                      |
+     |   <-- Auto-accumulate experience <--   |
+     |                      v
+     +-- maxim / decision / knowledge / pipeline
 ```
 
-- **While editing**: After Write/Edit, knowledge graph syncs automatically (Claude Code triggers via hooks; other clients can manually run `self-improve`)
-- **While reviewing**: Executes per project pipeline, conclusions flow back as knowledge
-- **While retrospecting**: `"Use pensieve to accumulate this experience"` -> Insights written to the corresponding layer
+- **During editing**: After Write/Edit, the knowledge graph syncs automatically (Claude Code triggers via hooks; other clients can manually run `self-improve`)
+- **During review**: Executes according to project pipelines, conclusions flow back as knowledge
+- **During retrospective**: `"Use pensieve to accumulate this experience"` -> Insights are written to the corresponding layer
 
 You steer the direction, Pensieve helps you avoid pitfalls.
 
 ## Four-Layer Knowledge Model
 
-| Layer | Type | What it answers | Cross-project? |
+| Layer | Type | What It Answers | Cross-project? |
 |---|---|---|---|
 | **MUST** | maxim | What must never be violated? | Yes -- holds across projects and languages |
-| **WANT** | decision | Why was this approach chosen? | No -- deliberate trade-offs for the current project |
+| **WANT** | decision | Why was this approach chosen? | No -- active trade-offs for the current project |
 | **HOW** | pipeline | How should this workflow run? | Depends |
 | **IS** | knowledge | What are the current facts? | No -- verifiable system facts |
 
-Layers are connected through three types of semantic links: `based-on / leads-to / related`.
+Layers are connected through three types of semantic links: `based-on / leads-to / related`. As usage accumulates, Pensieve automatically builds a directed graph of project knowledge:
+
+<img src="docs/graph-overview.png" width="100%" alt="Pensieve knowledge graph overview" />
+
+<details>
+<summary><b>Zoom in for detail</b></summary>
+
+<img src="docs/graph-detail.png" width="100%" alt="Pensieve knowledge graph detail" />
+
+</details>
 
 Detailed specifications are in `.src/references/`: [maxims.md](.src/references/maxims.md), [decisions.md](.src/references/decisions.md), [knowledge.md](.src/references/knowledge.md), [pipelines.md](.src/references/pipelines.md).
 
 ## Five Tools
 
-| Tool | What it does | Trigger example |
+| Tool | What It Does | Trigger Example |
 |---|---|---|
-| `init` | Creates data directory, seeds default content | "Initialize pensieve for me" |
-| `upgrade` | Refreshes skill source code | "Upgrade pensieve" |
-| `migrate` | Migrates legacy data, aligns seed files | "Migrate to v2" |
-| `doctor` | Read-only scan, checks structure and format | "Check if the data has any issues" |
-| `self-improve` | Extracts insights from conversations and diffs, writes to four-layer knowledge | "Accumulate this experience" |
+| `init` | Create data directory, seed default content | "Initialize pensieve for me" |
+| `upgrade` | Refresh skill source code | "Upgrade pensieve" |
+| `migrate` | Migrate legacy data, align seed files | "Migrate to v2" |
+| `doctor` | Read-only scan, check structure and format | "Check if the data has any issues" |
+| `self-improve` | Extract insights from conversations and diffs, write to four-layer knowledge | "Accumulate this experience" |
 
-Tool boundaries and redirect rules: [tool-boundaries.md](.src/references/tool-boundaries.md).
+Tool boundaries and redirection rules: [tool-boundaries.md](.src/references/tool-boundaries.md).
 
 ## Looking for the Linus Prompt?
 
-Pensieve originally became known for a Linus Torvalds-style prompt -- using "good taste", "never break userspace", and "obsession with simplicity" to constrain agent behavior.
+Pensieve was initially known for a Linus Torvalds-style guiding prompt -- using "good taste", "don't break userspace", and "paranoid about simplicity" to constrain agent behavior.
 
-That engineering philosophy is still Pensieve's core, but it's no longer an isolated prompt. It's now built in as executable principles; the agent has "good taste" from day one:
+That engineering philosophy is still at the core of Pensieve, but it's no longer an isolated prompt. It's now built in as executable principles, so the agent has "good taste" from day one:
 
-| Type | Built-in content | Effect |
+| Type | Built-in Content | Effect |
 |---|---|---|
-| maxim | 4 Linus-style engineering principles | Agent won't write patch-style code; simplify before extending; never break existing behavior |
-| pipeline | Commit review + code review | Every commit and review auto-checks against principles; conclusions flow back as knowledge |
-| knowledge | Code taste review criteria | "Good code" now has an executable definition |
+| maxim | 4 Linus-style engineering principles | Agent doesn't write patch-style code; simplify before extending; don't break existing behavior |
+| pipeline | Commit review + code review | Each commit and review automatically cross-references principles; conclusions flow back as knowledge |
+| knowledge | Code taste review criteria | "What is good code" now has an executable definition |
 
-Try: `"Use pensieve review to check the code taste of recent commits"` or `"Use pensieve commit to commit local changes"`.
+Try it: `"Use pensieve to review the code taste of recent commits"` or `"Use pensieve to commit local changes"`.
 
 ## Installation
 
@@ -133,10 +141,10 @@ bash <skill-path>/.src/scripts/init-project-data.sh
 
 </details>
 
-System code is installed globally once; user data is stored per-project in `<project>/.pensieve/`. Multiple projects share the same system code, each maintaining independent project knowledge.
+System code is installed globally once; user data is stored per project in `<project>/.pensieve/`. Multiple projects share the same system code, each maintaining independent project knowledge.
 
 <details>
-<summary><b>AI Agent Auto-Installation Reference</b></summary>
+<summary><b>AI Agent Auto-Install Reference</b></summary>
 
 When a user asks an AI agent to install Pensieve, the agent should follow this decision flow. Below, `SKILL_PATH` refers to the client-specific installation path (e.g., `~/.claude/skills/pensieve`).
 
@@ -149,7 +157,7 @@ if [[ -d "$SKILL_PATH/.src" ]]; then
     echo "Pensieve is already globally installed, skipping clone"
 else
     SKILL_PARENT="$(dirname "$SKILL_PATH")"
-    # Check if parent directory is a git repo (some users sync config via git)
+    # Check if parent directory is a git repo (some users sync configs with git)
     if git -C "$SKILL_PARENT/.." rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         git -C "$SKILL_PARENT/.." submodule add -b main https://github.com/kingkongshot/Pensieve.git "skills/pensieve"
     else
@@ -163,11 +171,11 @@ fi
 **Step 2: Determine whether to run project initialization**
 
 ```bash
-# If current directory is the skill's parent config directory, don't auto-initialize project data
+# If the current directory is the skill's parent config directory, don't auto-initialize project data
 CURRENT_DIR="$(pwd)"
 CONFIG_DIR="$(cd "$(dirname "$SKILL_PATH")/.." 2>/dev/null && pwd)"
 if [[ "$CURRENT_DIR" == "$CONFIG_DIR" ]]; then
-    echo "Current directory is a config directory, skipping project initialization. If you want to use Pensieve here, please specify explicitly."
+    echo "Current directory is the config directory, skipping project initialization. If you need to use Pensieve here, please specify explicitly."
     exit 0
 fi
 ```
@@ -195,7 +203,7 @@ else
 fi
 ```
 
-> **Key takeaways**: Check global install first -> Determine if parent directory is a git repo to decide clone/submodule -> Skip project initialization for config directories -> Detect legacy data to decide init/migrate.
+> **Key takeaway**: Check global install first -> Determine if parent directory is a git repo to decide clone/submodule -> Skip project initialization for config directories -> Check for legacy data to decide init/migrate.
 
 </details>
 
@@ -281,6 +289,10 @@ bash <skill-path>/.src/scripts/run-doctor.sh --strict
 - **Read specs before writing data** -- Before creating any user data, read the format specifications in `.src/references/`
 
 </details>
+
+## Community
+
+<img src="docs/QRCode.png" width="200" alt="QR Code" />
 
 ## License
 
