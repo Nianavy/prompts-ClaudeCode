@@ -76,8 +76,8 @@ else
   printf '%s\n' "_(graph not generated yet)_" > "$GRAPH_FILE"
 fi
 
-PYTHON_BIN="$(python_bin || true)"
-[[ -n "$PYTHON_BIN" ]] || { echo "Python not found" >&2; exit 1; }
+ensure_python_env
+[[ -n "${PYTHON_BIN:-}" ]] || { echo "Python not found" >&2; exit 1; }
 TODAY_UTC="$(date -u +"%Y-%m-%d")"
 
 "$PYTHON_BIN" - "$STATE_FILE" "$GRAPH_FILE" "$EVENT" "$TODAY_UTC" "$PROJECT_ROOT" "$USER_DATA_ROOT" "$STATE_ROOT" "$NOTE" <<'PY'

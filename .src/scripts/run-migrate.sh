@@ -114,8 +114,8 @@ mkdir -p "$(dirname "$REPORT")" "$(dirname "$SUMMARY_JSON")"
 SKILL_ROOT="$(skill_root_from_script "$SCRIPT_DIR")"
 SCHEMA_FILE="$SKILL_ROOT/.src/core/schema.json"
 MAINTAIN_SCRIPT="$SCRIPT_DIR/maintain-project-state.sh"
-PYTHON_BIN="$(python_bin || true)"
-[[ -n "$PYTHON_BIN" ]] || { echo "Python not found" >&2; exit 1; }
+ensure_python_env
+[[ -n "${PYTHON_BIN:-}" ]] || { echo "Python not found" >&2; exit 1; }
 
 mkdir -p "$BACKUP_DIR"
 
