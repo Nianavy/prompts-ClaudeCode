@@ -54,8 +54,8 @@ if [[ -z "$ROOT" ]]; then
 fi
 ROOT="$(to_posix_path "$ROOT")"
 
-PYTHON_BIN="$(python_bin || true)"
-[[ -n "$PYTHON_BIN" ]] || { echo "Python not found" >&2; exit 1; }
+ensure_python_env
+[[ -n "${PYTHON_BIN:-}" ]] || { echo "Python not found" >&2; exit 1; }
 
 "$PYTHON_BIN" - "$ROOT" "$FORMAT" <<'PY'
 from __future__ import annotations

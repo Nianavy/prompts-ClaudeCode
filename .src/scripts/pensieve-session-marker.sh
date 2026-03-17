@@ -52,8 +52,8 @@ if [[ "$MODE" == "record" && -z "$EVENT" ]]; then
   exit 1
 fi
 
-PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 || command -v python || true)}"
-[[ -n "$PYTHON_BIN" ]] || exit 0
+ensure_python_env
+[[ -n "${PYTHON_BIN:-}" ]] || exit 0
 
 SKILL_ROOT="$(skill_root_from_script "$SCRIPT_DIR")"
 PROJECT_ROOT="$(project_root)" || exit 0
