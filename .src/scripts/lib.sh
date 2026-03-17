@@ -235,6 +235,7 @@ ensure_user_data_root() {
     local dr
     dr="$(user_data_root "${1:-$(pwd)}")"
     mkdir -p "$dr"/{maxims,decisions,knowledge,pipelines}
+    mkdir -p "$dr"/short-term/{maxims,decisions,knowledge,pipelines}
     echo "$dr"
 }
 

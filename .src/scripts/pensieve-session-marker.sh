@@ -207,10 +207,49 @@ self_check_version = str(state.get("self_check_version") or "")
 self_check_ok = self_check_version == skill_version
 
 if initialized and self_check_ok:
+    # Scan short-term/ for due items
+    import datetime as _dt
+    import re as _re
+
+    _st_dir = Path(project_root) / ".pensieve" / "short-term"
+    _st_total = 0
+    _st_due = 0
+    _today = _dt.date.today()
+    _ttl_days = 7
+    _date_re = _re.compile(r"^created:\s*(\d{4}-\d{2}-\d{2})", _re.MULTILINE)
+
+    if _st_dir.is_dir():
+        for _f in sorted(_st_dir.rglob("*.md")):
+            if not _f.is_file():
+                continue
+            _text = _f.read_text(encoding="utf-8", errors="replace")[:1024]
+            _fm_end = _text.find("\n---", 4)
+            if _fm_end < 0:
+                continue
+            _fm = _text[: _fm_end]
+            # Skip seed files
+            _tags_idx = _fm.find("tags:")
+            if _tags_idx >= 0 and "seed" in _fm[_tags_idx:].split("\n")[0].lower():
+                continue
+            _m = _date_re.search(_fm)
+            if not _m:
+                continue
+            try:
+                _created = _dt.date.fromisoformat(_m.group(1))
+            except ValueError:
+                continue
+            _st_total += 1
+            if (_today - _created).days >= _ttl_days:
+                _st_due += 1
+
+    ctx = f"PENSIEVE_SKILL_ROOT={skill_root}\nPENSIEVE_PROJECT_ROOT={project_root}"
+    if _st_due > 0:
+        ctx += f"\n\n短期记忆待整理：{_st_due} 条已到期（共 {_st_total} 条）。可运行 triage 工具整理。"
+
     payload = {
         "hookSpecificOutput": {
             "hookEventName": "SessionStart",
-            "additionalContext": f"PENSIEVE_SKILL_ROOT={skill_root}\nPENSIEVE_PROJECT_ROOT={project_root}",
+            "additionalContext": ctx,
         },
     }
     print(json.dumps(payload, ensure_ascii=False))
