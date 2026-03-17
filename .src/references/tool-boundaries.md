@@ -7,7 +7,7 @@
 | `migrate` | 旧版本数据迁移、目录结构对齐、关键文件对齐 | 不更新版本，不给 PASS/FAIL |
 | `doctor` | 结构与格式体检，输出固定报告 | 不改业务代码 |
 | `self-improve` | 新建条目写入 `short-term/`，修改已有文件原地修改 | 不替代 init/migrate/doctor |
-| `triage` | 审阅 short-term 到期条目，按规范 promote 或删除 | 不写新条目，不替代 self-improve |
+| `refine` | 精炼知识库：triage 五问审阅 + compress 压缩抽象 | compress 产出的新条目走 short-term |
 
 ## 常见重定向
 
@@ -19,4 +19,4 @@
 | "迁移到 v2/清理旧路径" | `migrate` |
 | "检查数据是否有问题" | `doctor` |
 | "把这次经验沉淀下来" | `self-improve` |
-| "整理短期记忆/清理 short-term" | `triage` |
+| "整理/去重/压缩/精炼知识" | `refine` |

@@ -19,7 +19,7 @@ description: >-
 - Migrate: 结构迁移和遗留清理。工具规格：`.src/tools/migrate.md`。
 - Doctor: 只读扫描当前项目用户数据目录。工具规格：`.src/tools/doctor.md`。
 - Self-Improve: 提取可复用结论并写入用户数据。工具规格：`.src/tools/self-improve.md`。
-- Triage: 整理 short-term/ 到期条目，按规范审阅后 promote 或删除。工具规格：`.src/tools/triage.md`。
+- Refine: 精炼知识库（triage 五问审阅 + compress 压缩抽象）。工具规格：`.src/tools/refine.md`。
 - Graph View: 读取 `<project-root>/.pensieve/.state/pensieve-user-data-graph.md`。
 
 ## Project Data
