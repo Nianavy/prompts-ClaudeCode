@@ -36,6 +36,7 @@ SYSTEM_KNOWLEDGE_ROOT="$SKILL_ROOT/.src/templates/knowledge"
 PROJECT_STATE_SCRIPT="$SKILL_ROOT/.src/scripts/maintain-project-state.sh"
 
 mkdir -p "$DATA_ROOT"/{maxims,decisions,knowledge,pipelines}
+mkdir -p "$DATA_ROOT"/short-term/{maxims,decisions,knowledge,pipelines}
 
 # Create .pensieve/.gitignore (only ignore .state/)
 PENSIEVE_GITIGNORE="$DATA_ROOT/.gitignore"
