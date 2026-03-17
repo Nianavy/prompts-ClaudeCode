@@ -9,7 +9,7 @@
 # - Hidden runtime state lives under <project>/.pensieve/.state/.
 
 # Resolve home directory reliably across platforms.
-# Priority: $HOME > $USERPROFILE (Windows) > cd ~ > whoami-based guess.
+# Priority: $HOME > $USERPROFILE (Windows) > cd ~ (tilde expansion).
 resolve_home() {
     if [[ -n "${HOME:-}" ]]; then
         to_posix_path "$HOME"
@@ -30,13 +30,15 @@ resolve_home() {
     return 1
 }
 
-# Ensure HOME is set. Call early in scripts that depend on $HOME.
+# Ensure HOME is set and POSIX-normalized. Call early in scripts that depend on $HOME.
 # Exports HOME so child processes (Python, sub-scripts) also see it.
 ensure_home() {
     if [[ -z "${HOME:-}" ]]; then
         HOME="$(resolve_home)" || return 1
-        export HOME
+    else
+        HOME="$(to_posix_path "$HOME")"
     fi
+    export HOME
 }
 
 # Sync marker: v2026-03-10 — run-hook.sh has a standalone copy; keep in sync.
@@ -71,7 +73,7 @@ skill_root_from_script() {
     dir="$(cd "$script_dir" && pwd)"
 
     local depth=0
-    while [[ $depth -lt 20 ]]; do
+    while [[ $depth -lt 50 ]]; do
         if [[ -f "$dir/.src/manifest.json" ]]; then
             echo "$dir"
             return 0
@@ -178,7 +180,7 @@ project_root() {
     local dir prev_dir
     dir="$(cd "$start_dir" && pwd)"
     local depth=0
-    while [[ $depth -lt 20 ]]; do
+    while [[ $depth -lt 50 ]]; do
         if [[ -d "$dir/.pensieve" ]]; then
             echo "$dir"
             return 0

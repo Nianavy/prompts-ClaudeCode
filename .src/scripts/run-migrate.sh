@@ -160,6 +160,7 @@ def read_schema(path: Path) -> dict:
 
 schema = read_schema(schema_file)
 required_dirs = [str(x) for x in schema.get("required_dirs", [])]
+optional_dirs = [str(x) for x in schema.get("optional_dirs", [])]
 legacy_paths_schema = schema.get("legacy_paths") if isinstance(schema.get("legacy_paths"), dict) else {}
 legacy_project_paths = [project_root / p for p in legacy_paths_schema.get("project", []) if isinstance(p, str)]
 legacy_user_paths = [home_dir / p for p in legacy_paths_schema.get("user", []) if isinstance(p, str)]
@@ -277,6 +278,10 @@ def iter_category_files(base: Path, category: str):
 ensure_dir(root)
 for d in required_dirs:
     ensure_dir(root / d)
+for d in optional_dirs:
+    ensure_dir(root / d)
+    for sub in required_dirs:
+        ensure_dir(root / d / sub)
 
 # --- Phase 2: Migrate user data from legacy v1 paths ---
 
@@ -286,7 +291,7 @@ for legacy in legacy_paths:
     if not legacy.is_dir():
         continue
 
-    for category in required_dirs:
+    for category in required_dirs + optional_dirs:
         for src_file, rel in iter_category_files(legacy, category) or []:
             dst = root / category / rel
             copy_with_conflict(src_file, dst)
@@ -324,7 +329,7 @@ for pattern in legacy_graph_patterns:
         if not dry_run:
             path.unlink(missing_ok=True)
 
-for category in required_dirs:
+for category in required_dirs + optional_dirs:
     cat_dir = root / category
     if not cat_dir.is_dir():
         continue
